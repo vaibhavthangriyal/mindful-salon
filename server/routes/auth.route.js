@@ -187,15 +187,13 @@ router.post('/register2', async (req, res) => {
       res.status(400).json({ status: 400, data: null, errors: true, message: "Invalid token" });
     }
   } else {
-    console.log("BODY IS ", req.body);
     result = await UserController.verifyMobileRegister(req.body);
     if (!isEmpty(result.errors)) {
-      console.log("HAS ERRORS");
       return res.status(400).json({ status: 400, data: null, errors: result.errors, message: "Fields required" });
     }
     let otp = Math.floor(Math.random() * (999999 - 100000) + 100000);
     let senderid = process.env.MSG_SENDER;
-    let message = `Your otp is ${otp}`;
+    let message = `${otp} is Your OTP(One Time Password) for logging into SGS Marketing App. For Secuirty Reasons, do not share the OTP. `;
     let mobile_no = req.body.mobile_number;
     let authkey = process.env.MSG_AUTH_KEY;
     axios.post(`https://control.msg91.com/api/sendotp.php?otp=${otp}&sender=${senderid}&message=${message}&mobile=${mobile_no}&authkey=${authkey}`)

@@ -17,6 +17,7 @@ import { OptionsComponent } from './options/options.component';
 import { ProductOptionService } from './options/shared/product.types.service';
 import { ProductsCategoryService } from './category/shared/category.service';
 import { ProductVarientService } from './shared/product.varient.service';
+import { NgxGalleryModule } from 'ngx-gallery';
 
 @NgModule({
   imports: [
@@ -26,7 +27,8 @@ import { ProductVarientService } from './shared/product.varient.service';
     DataTablesModule,
     ProductsRoutingModule,
     InputSwitchModule,
-    Select2Module
+    Select2Module,
+    NgxGalleryModule
   ],
   declarations: [ProductsComponent, CategoryComponent, BrandComponent, AttributesComponent, TypesComponent, OptionsComponent],
   exports: [

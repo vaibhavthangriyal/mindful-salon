@@ -15,6 +15,7 @@ import { AttributesService } from './attributes/shared/attributes.service';
 import { ProductOptionService } from './options/shared/product.types.service';
 import { ProductVarientService } from './shared/product.varient.service';
 import { validateBasis } from '@angular/flex-layout';
+import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from 'ngx-gallery';
 
 @Component({
   selector: 'app-products',
@@ -27,6 +28,8 @@ export class ProductsComponent implements OnInit {
   @ViewChildren('selectallcheckboxes') selectallcheckboxes: QueryList<ElementRef>;
   @ViewChildren('selectallcheckboxes') selectallcheckboxes2: any;
   @ViewChildren('checkboxes') checkboxes2: any;
+  galleryOptions: NgxGalleryOptions[];
+  galleryImages: NgxGalleryImage[] = [];
   fileSelected: any;
   imageUrl = 'https://sgsmarketing.s3.ap-south-1.amazonaws.com/';
   jQuery: any;
@@ -174,6 +177,48 @@ export class ProductsComponent implements OnInit {
       price: ['', Validators.required],
       stock: ['', Validators.required]
     });
+  }
+
+  
+  initGallery(photos) {
+    this.galleryOptions = [
+      {
+        imageSize: 'containe',
+        width: '600px',
+        height: '400px',
+        thumbnailsColumns: 4,
+        imageAnimation: NgxGalleryAnimation.Slide
+      },
+      // max-width 800
+      {
+        breakpoint: 800,
+        width: '100%',
+        height: '600px',
+        imagePercent: 80,
+        thumbnailsPercent: 20,
+        thumbnailsMargin: 20,
+        thumbnailMargin: 20
+      },
+      // max-width 400
+      {
+        breakpoint: 400,
+        preview: false
+      }
+    ];
+    const imageArray: any[] = [];
+    for (let index = 0; index < photos.length; index++) {
+      const imageObject: { small: String, medium: String, big: String } = { small: '', medium: '', big: '' };
+      imageObject.small = 'https://sgsmarketing.s3.ap-south-1.amazonaws.com/' + photos[index];
+      imageObject.medium = 'https://sgsmarketing.s3.ap-south-1.amazonaws.com/' + photos[index];
+      imageObject.big = 'https://sgsmarketing.s3.ap-south-1.amazonaws.com/' + photos[index];
+      imageArray.push(imageObject);
+    }
+    this.galleryImages = imageArray;
+    // if (this.galleryImages.length > 0) {
+    //   this.imagesPresent = true;
+    // } else {
+    //   this.imagesPresent = false;
+    // }
   }
   // ************************** GET FUNCTIONS *********************
   get f() { return this.productForm.controls; }
@@ -571,6 +616,7 @@ export class ProductsComponent implements OnInit {
   editVarient(index: number) {
     this.initProductVarientForm();
     this.currentVarient = this.varientArray[index];
+    this.initGallery(this.currentVarient.images);
     console.log(this.currentVarient);
     this.varientUpdate = true;
     if (this.currentVarient.name) {

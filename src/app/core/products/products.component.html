@@ -551,7 +551,7 @@
 
 <!-- ****************** ADD IMAGES TO VARIENT MODAL ********************************** -->
 <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title ml-auto font-weight-bold" id="exampleModalLabel">Add Images</h5>
@@ -560,8 +560,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <img src="https://sgsmarketing.s3.ap-south-1.amazonaws.com/{{currentVarient?.images[0]}}" alt="" height="500px"
-          width="300px">
+        <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
         <input type="file" name="" id="" (change)="onSelectFile($event)" formControlName="images" multiple>
       </div>
       <div class="modal-footer">
