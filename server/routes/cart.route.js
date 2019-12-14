@@ -28,7 +28,7 @@ router.get("/", authorizePrivilege("GET_CART"), (req, res) => {
             return res.status(500).json({ status: 500, data: null, errors: true, message: "Error while aggregate" })
         }
         if (doc) {
-            Cart.populate(doc, [{ path: "products.product", populate: { path: "product attributes.option attributes.attribute",populate:{path:"category brand"}} }], (err, doc) => {
+            Cart.populate(doc, [{ path: "products.product", populate: { path: "product attributes.option attributes.attribute", populate: { path: "category brand" } } }], (err, doc) => {
                 if (err) {
                     console.log(err);
                     res.status(500).json({ status: 500, data: null, errors: true, message: "Error while getting cart" })
@@ -86,7 +86,7 @@ router.post("/", authorizePrivilege("ADD_PRODUCT_TO_CART"), (req, res) => {
                 return res.status(500).json({ status: 500, data: null, errors: true, message: "Error while aggregate" })
             }
             if (doc) {
-                Cart.populate(doc, [{ path: "products.product", populate: { path: "product attributes.option attributes.attribute",populate:{path:"category brand"}} }], (err, doc) => {
+                Cart.populate(doc, [{ path: "products.product", populate: { path: "product attributes.option attributes.attribute", populate: { path: "category brand" } } }], (err, doc) => {
                     if (err) {
                         console.log(err);
                         res.status(500).json({ status: 500, data: null, errors: true, message: "Error while getting cart" })

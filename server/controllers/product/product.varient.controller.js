@@ -8,6 +8,7 @@ const productVarientCreateSchema = Joi.object({
     })).required(),
     description: Joi.string().optional(),
     // name: Joi.string().required(),
+    images: Joi.any().optional(),
     price: Joi.number().required(),
     product: Joi.string().required(),
     // sku_id: Joi.string().required(),
@@ -23,6 +24,7 @@ const productVarientUpdateSchema = Joi.object({
     description: Joi.string().optional(),
     // name: Joi.string().optional(),
     price: Joi.number().optional(),
+    images: Joi.any().optional(),
     // sku_id: Joi.string().optional(),
     stock: Joi.number().optional()
     // is_active: Joi.boolean().optional()

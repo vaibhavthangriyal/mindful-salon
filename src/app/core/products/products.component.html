@@ -434,18 +434,23 @@
 <div class="modal fade" id="varientModal" tabindex="-1" role="dialog" aria-labelledby="varientModal" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="font-weight-bold">{{currentproduct?.name | uppercase}}</h3>
-        <div class="float-right">
-          <button type="button" class="btn btn-primary mx-1 float-right" data-toggle="modal"
-            data-target="#addVarientModal" (click)="resetProductVarientForm()">Add
-            Varient</button>
+      <div class="card">
+        <div class="card-header modal-header">
+          <div class="col-md-10">
+            <div class="font-weight-bold h5">{{currentproduct?.name | uppercase}}</div>
+          </div>
+          <div class="col-md-2">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
         </div>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
       </div>
-      <div class="modal-body">
+      <div class="card-body">
+        <button type="button" class="btn btn-primary btn-sm mx-1" data-toggle="modal" data-target="#addVarientModal"
+          (click)="resetProductVarientForm()">Add
+          Varient
+        </button>
         <table class="table" *ngIf="(varientArray.length > 0)">
           <thead>
             <tr>
@@ -475,9 +480,12 @@
               </ng-container>
               <td scope="row">
                 <a style="cursor:pointer" data-toggle="modal" data-target="#addVarientModal" (click)="editVarient(i)"><i
-                    class="fas fa-edit mx-1" data-toggle="tooltip" data-placement="top" title="Edit Product"></i></a>
-                <a style="cursor:pointer" data-toggle="tooltip" data-placement="top" title="Delete Product"><i
+                    class="fas fa-edit mx-1" data-toggle="tooltip" data-placement="top" title="Edit Varient"></i></a>
+                <a style="cursor:pointer" data-toggle="tooltip" data-placement="top" title="Delete Varient"><i
                     class="fas fa-trash-alt " (click)="deleteVarient(i)"></i></a>
+                <a style="cursor:pointer" data-toggle="tooltip" data-placement="top" (click)="editVarient(i)"
+                  title="Upload Images"><i class="fas fa-plus-square mx-1" data-target="#imageModal"
+                    data-toggle="modal"></i></a>
               </td>
             </tr>
           </tbody>
@@ -505,44 +513,28 @@
       <div class="modal-body">
         <form [formGroup]="productVarient" (ngSubmit)="saveVarient()">
           <div class="row">
-            <!-- <div class="form-group col">
-              <label><b>SKU ID</b></label>
-              <input type="text" formControlName="sku_id" class="form-control" placeholder="Enter SKU ID">
-            </div> -->
-            <div class="col-md-8">
-              <div class="row">
-                <div class="form-group col">
-                  <label><b>Price</b></label>
-                  <input type="number" formControlName="price" class="form-control" placeholder="Enter Price">
-                </div>
-                <div class="form-group col">
-                  <label><b>Stock</b></label>
-                  <input type="number" formControlName="stock" class="form-control" placeholder="Enter Stock">
-                </div>
-              </div>
-              <!-- <div class="row"> -->
-                <div formArrayName="attributes" class="row">
-                  <div *ngFor="let attribute of currentProductAttributesForms?.controls; let i=index"
-                    [formGroupName]="i" class="col form-group d-inline">
-                    <!-- <div class="row"> -->
-                    <!-- <div class="col-md-3 form-group d-inline"> -->
-                    <label for=""><b>{{productAttributeArray[i]?.name | titlecase}}</b></label>
-                    <select name="" class="form-control" id="" formControlName="option">
-                      <option [ngValue]="option._id" *ngFor="let option of productAttributeArray[i]?.product_option">
-                        {{option?.value | titlecase}}</option>
-                    </select>
-                    <!-- </div> -->
-                    <!-- </div> -->
-                  </div>
-                </div>
-              <!-- </div> -->
+            <div class="form-group col">
+              <label><b>Price</b></label>
+              <input type="number" formControlName="price" class="form-control" placeholder="Enter Price">
             </div>
-            <div class="col-md-4">
-              <div class="form-group col">
-                <label><b>Description</b></label>
-                <textarea name="" id="" cols="30" rows="10" formControlName="description" class="form-control"
-                  placeholder="Enter Description"></textarea>
-              </div>
+            <div class="form-group col">
+              <label><b>Stock</b></label>
+              <input type="number" formControlName="stock" class="form-control" placeholder="Enter Stock">
+            </div>
+          </div>
+          <div class="form-row ">
+            <label><b>Description</b></label>
+            <textarea name="" id="" cols="30" rows="3" formControlName="description" class="form-control"
+              placeholder="Enter Description"></textarea>
+          </div>
+          <div formArrayName="attributes" class="row">
+            <div *ngFor="let attribute of currentProductAttributesForms?.controls; let i=index" [formGroupName]="i"
+              class="col form-group d-inline">
+              <label for=""><b>{{productAttributeArray[i]?.name | titlecase}}</b></label>
+              <select name="" class="form-control" id="" formControlName="option">
+                <option [ngValue]="option._id" *ngFor="let option of productAttributeArray[i]?.product_option">
+                  {{option?.value | titlecase}}</option>
+              </select>
             </div>
           </div>
           <br>
@@ -551,6 +543,30 @@
             <button type="submit" class="btn btn-primary">{{varientUpdate ? 'Edit Varient':'Add Varient'}}</button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ****************** ADD IMAGES TO VARIENT MODAL ********************************** -->
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title ml-auto font-weight-bold" id="exampleModalLabel">Add Images</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <img src="https://sgsmarketing.s3.ap-south-1.amazonaws.com/{{currentVarient?.images[0]}}" alt="" height="500px"
+          width="300px">
+        <input type="file" name="" id="" (change)="onSelectFile($event)" formControlName="images" multiple>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        <button class="btn btn-primary" (click)="uploadImages()">Upload Images</button>
       </div>
     </div>
   </div>

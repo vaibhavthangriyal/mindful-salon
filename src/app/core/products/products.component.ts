@@ -53,6 +53,7 @@ export class ProductsComponent implements OnInit {
   urlProductImage: any;
   showImage: Boolean = false;
   image: any;
+  imageFormData: FormData = new FormData();
   editShowImage: Boolean = false;
   varientUpdate: Boolean = false;
   editImage: any;
@@ -62,6 +63,7 @@ export class ProductsComponent implements OnInit {
   optionArray: FormArray;
   pattern = '^[0-9]*$';
   productAttributeArray: any[] = [];
+  productFormData: FormData;
   productImagesArray: any[] = [];
   productOptionsArray: any[] = [];
   productType: ProductTypeModel;
@@ -168,7 +170,7 @@ export class ProductsComponent implements OnInit {
       attributes: this.formBuilder.array([]),
       // name: ['', Validators.required],
       description: ['', Validators.required],
-      // sku_id: ['', Validators.required],
+      images: ['', Validators.required],
       price: ['', Validators.required],
       stock: ['', Validators.required]
     });
@@ -327,6 +329,7 @@ export class ProductsComponent implements OnInit {
         this.toastr.error('Unable to Fetch Varients', 'Refresh and Retry');
       } else {
         this.varientArray = res.data;
+        console.log(this.varientArray);
       }
     });
   }
@@ -438,10 +441,18 @@ export class ProductsComponent implements OnInit {
     if (this.varientUpdate === false) {
       this.productVarient.value.product = this.currentproduct._id;
       const attribute = this.productVarient.value.attributes;
-      const attributesLength = this.productVarient.value.attributes.length;
       for (let index = 0; index < attribute.length; index++) {
         this.productVarient.value.attributes[index].attribute = this.productAttributeArray[index]._id;
       }
+      // this.productFormData = new FormData();
+      // this.productFormData.append('product',  this.currentproduct._id);
+      // this.productFormData.append('attributes', this.productVarient.get('attributes').value);
+      // this.productFormData.append('description', this.productVarient.get('description').value);
+      // this.productFormData.append('price', this.productVarient.get('price').value);
+      // this.productFormData.append('stock', this.productVarient.get('stock').value);
+      // if (this.productVarient.get('images').value) {
+      //   this.productFormData.append('images', this.productVarient.get('images').value);
+      // }
       this.productVarientService.addNewProductVarients(this.productVarient.value).subscribe((res: ResponseModel) => {
         if (res.errors) {
           this.toastr.error('Error While Adding Varient', 'Refresh And Retry');
@@ -456,7 +467,14 @@ export class ProductsComponent implements OnInit {
       for (let i = 0; i < this.currentVarient.attributes.length; i++) {
         this.productVarient.value.attributes[i].attribute = this.currentVarient.attributes[i].attribute._id;
       }
-      this.productVarientService.updateProductVarients(this.currentVarient._id, this.productVarient.value)
+      this.productFormData = new FormData();
+      this.productFormData.append('product', this.productVarient.get('product').value);
+      this.productFormData.append('attributes', this.productVarient.get('attributes').value);
+      this.productFormData.append('description', this.productVarient.get('description').value);
+      this.productFormData.append('price', this.productVarient.get('price').value);
+      this.productFormData.append('stock', this.productVarient.get('stock').value);
+      this.productFormData.append('images', this.productVarient.get('images').value);
+      this.productVarientService.updateProductVarients(this.currentVarient._id, this.productFormData)
         .subscribe((res: ResponseModel) => {
           if (res.errors) {
             this.toastr.error('Error While Deleting Varient');
@@ -553,6 +571,7 @@ export class ProductsComponent implements OnInit {
   editVarient(index: number) {
     this.initProductVarientForm();
     this.currentVarient = this.varientArray[index];
+    console.log(this.currentVarient);
     this.varientUpdate = true;
     if (this.currentVarient.name) {
       this.productVarient.controls['name'].setValue(this.currentVarient.name);
@@ -581,7 +600,6 @@ export class ProductsComponent implements OnInit {
     }
   }
 
-
   // ************************** FORMARRAY FUNCTIONS *****************************
 
   get currentProductAttributesForms() {
@@ -604,4 +622,30 @@ export class ProductsComponent implements OnInit {
     }
   }
 
+  appFormDataFuntion(data) {
+    for (let index = 0; index < data.length; index++) {
+      console.log(data[index]);
+    }
+  }
+
+  onSelectFile(event) {
+    if (event.target.files && event.target.files[0]) {
+      const filesAmount = event.target.files.length;
+      for (let i = 0; i < filesAmount; i++) {
+        this.imageFormData.append('images', event.target.files[i]);
+      }
+    }
+  }
+
+  uploadImages() {
+    this.productService.uploadProductImages(this.currentVarient._id, this.imageFormData).subscribe((res: ResponseModel) => {
+      if (res.errors) {
+        this.toastr.error('Error While Uploading Images', 'Try Again ');
+      } else {
+        this.toastr.success('Images Uploaded Successfully');
+        jQuery('#imageModal').modal('hide');
+      }
+    });
+  }
 }
+

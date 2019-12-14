@@ -6,6 +6,7 @@ const ProductCategory = require('../../models/products/product.category.model');
 const ProductVarientController = require('../../controllers/product/product.varient.controller');
 const isEmpty = require('../../utils/is-empty');
 const mongodb = require('mongoose').Types;
+const { upload, S3Upload } = require("../../utils/image-upload");
 const authorizePrivilege = require("../../middleware/authorizationMiddleware");
 //  *************** GET APIS *********************** //
 // GET ALL PRODUCT VARIENTS
@@ -218,6 +219,43 @@ router.get("/byproduct/:id", authorizePrivilege("GET_ALL_PRODUCT_VARIENTS"), (re
         // })
     } else {
         res.status(400).json({ status: 400, data: null, errors: true, message: "INVALID ID" })
+    }
+})
+
+//UPLOAD IMAGES
+router.put("/images/:id", authorizePrivilege("UPDATE_PRODUCT_VARIENTS"),upload.array("images",4), async(req, res) => {
+    if (mongodb.ObjectId.isValid(req.params.id)) {
+        console.log(req.files)
+        let arr=[];
+        try{
+            req.files.forEach(e=>{
+                arr.push(S3Upload('products/'+req.params.id,e));
+            })
+            Promise.all(arr).then(data=>{
+                ProductVarient
+                .findByIdAndUpdate(req.params.id, { $set: {images:data} }, { new: true }, (err, doc) => {
+                    if (err)
+                        return res.status(500).json({ status: 500, data: null, errors: true, message: "Error while updating ProductVARIENTS" });
+                    else {
+                        if (doc)
+                            ProductVarient.find({ product: doc.product }).populate("attributes.attribute attributes.option").exec().then(_data => {
+                                return res.status(200).json({ status: 200, data: _data, errors: false, message: "ProductVARIENTS Updated Successfully" });
+                            }).catch(err => {
+                                console.log(err);
+                                res.json({ status: 200, data: null, errors: true, message: "Error while getting varients" });
+                            })
+                        else {
+                            return res.status(200).json({ status: 200, data: [], errors: false, message: "No vairants found" });
+                        }
+                    }
+                })
+            })
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({status:500,data:null,errors:true,message:"Something went wrong"});
+        }
+    } else {
+        res.json({ status: 200, data: null, errors: true, message: "Invalid ProductVARIENTS id" });
     }
 })
 module.exports = router;

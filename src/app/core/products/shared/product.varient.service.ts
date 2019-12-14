@@ -25,7 +25,7 @@ export class ProductVarientService {
         return this.http.post(this.productVarientURL + '/add', varient, { headers: this.headers });
     }
 
-    updateProductVarients(id,variant) {
+    updateProductVarients(id, variant) {
         return this.http.put(this.productVarientURL + '/update/' + id, variant, { headers: this.headers });
     }
 
