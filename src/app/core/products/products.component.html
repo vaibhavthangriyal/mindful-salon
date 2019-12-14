@@ -17,7 +17,7 @@
             <th scope="col">Category</th>
             <th scope="col">Type</th>
             <th scope="col">Brand</th>
-            <th scope="col">Selling Price</th>
+            <!-- <th scope="col">Selling Price</th> -->
             <!-- <th scope="col">Stock</th> -->
             <th scope="col">Created by</th>
             <th scope="col">Status</th>
@@ -36,8 +36,8 @@
             <td *ngIf="product.type">{{product?.type?.name | titlecase}}</td>
             <td *ngIf="!product.type">-</td>
             <td>{{product?.brand?.name | titlecase}}</td>
-            <td *ngIf="product.selling_price">{{product?.selling_price | number}}</td>
-            <td *ngIf="!product.selling_price">{{product?.selling_price | number}}</td>
+            <!-- <td *ngIf="product.selling_price">{{product?.selling_price | number}}</td>
+            <td *ngIf="!product.selling_price">{{product?.selling_price | number}}</td> -->
             <!-- <td *ngIf="product.base_price">{{product?.base_price | number}}</td> -->
             <!-- <td>{{product?.stock | number}}
               <a style="cursor:pointer" data-toggle="tooltip" data-placement="top" title="Add Stock"><i
@@ -137,14 +137,11 @@
             </div>
             <div class="form-group col-md-4">
               <label for="inputEmail4">Service Type</label>
-              <select class="form-control" required (change)="selectedServiceType($event)">
+              <select class="form-control" required formControlName="service_type" (change)="selectedServiceType($event)">
                 <option selected disabled>Select Type</option>
                 <option value="product">Product</option>
                 <option value="service">Service</option>
               </select>
-              <div *ngIf="submitted && f.base_price.errors" class="invalid-feedback">
-                <div *ngIf="f.base_price.errors.required">Base Price is required</div>
-              </div>
             </div>
           </div>
           <div class="form-row" *ngIf="(allSubCategories.length > 0)">
@@ -227,13 +224,15 @@
               </div>
             </div>
             <div class="form-group col-md-3">
+              <label for="">Upload Image</label>
               <div class="custom-file">
                 <label class="custom-file-label" for="customFile">Select Product Image</label>
                 <input type="file" formControlName="image" (change)="selectFile($event)" class="custom-file-input"
                   id="customFile">
               </div>
             </div>
-            <div class="form-group col-md-3">
+            <div class="form-group ml-auto col-md-3">
+              <label for="">Status</label>
               <p-inputSwitch class="form-control" formControlName="is_active" required
                 [ngClass]="{ 'is-invalid': submitted && f.is_active.errors }"></p-inputSwitch>
               <div *ngIf="submitted && f.is_active.errors" class="invalid-feedback">
@@ -561,7 +560,7 @@
       </div>
       <div class="modal-body">
         <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
-        <input type="file" name="" id="" (change)="onSelectFile($event)" formControlName="images" multiple>
+        <input type="file" name="" id="" (change)="onSelectFile($event)" multiple>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>

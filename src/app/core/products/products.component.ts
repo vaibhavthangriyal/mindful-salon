@@ -15,7 +15,7 @@ import { AttributesService } from './attributes/shared/attributes.service';
 import { ProductOptionService } from './options/shared/product.types.service';
 import { ProductVarientService } from './shared/product.varient.service';
 import { validateBasis } from '@angular/flex-layout';
-import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from 'ngx-gallery';
+import { NgxGalleryImage, NgxGalleryAnimation, NgxGalleryOptions } from 'ngx-gallery';
 
 @Component({
   selector: 'app-products',
@@ -157,7 +157,8 @@ export class ProductsComponent implements OnInit {
       name: ['', Validators.required],
       base_price: ['', [Validators.required, Validators.pattern('^[0-9]*$'), Validators.minLength(1)]],
       image: [''],
-      type: ['']
+      type: [''],
+      service_type: ['']
     });
   }
 
@@ -179,7 +180,7 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-  
+
   initGallery(photos) {
     this.galleryOptions = [
       {
@@ -445,6 +446,12 @@ export class ProductsComponent implements OnInit {
   submit() {
     this.productForm.get('type').setValue(this.productType);
     this.submitted = true;
+    if (!this.productForm.get('image').value) {
+      this.productForm.removeControl('image');
+    }
+    if (!(this.showSellingPrice)) { this.productForm.removeControl('base_price') }
+    else { this.productForm.addControl('base_price', new FormControl('')) }
+    console.log(this.productForm.value);
     if (this.productForm.invalid) {
       return;
     } else {

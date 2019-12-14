@@ -15,7 +15,7 @@ const ProductSchema = new Schema({
     image: { type: String },
     name: { type: String, required: true, lowercase: true, trim: true },
     product_id: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    base_price: { type: Number, required: true },
+    base_price: { type: Number },
     type: { type: mongoose.Schema.Types.ObjectId, ref: 'product_type', required: true },
     stock: { type: Number, default: 0, required: true },
 }, {
