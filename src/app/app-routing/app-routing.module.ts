@@ -13,7 +13,7 @@ const routes: Routes = [
   // { path: 'auth', loadChildren: 'app/auth/auth.module#AuthModule', canActivate: [AuthGuard] },
   // { path: 'admin', loadChildren: 'app/admin/admin.module#AdminModule' },
   { path: 'login', component: LoginComponent },
-  { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
+  { path: 'settings', component: SettingsComponent },
   { path: 'signup', component: RegisterComponent },
   { path: 'oops', component: MaintainanceComponent, canActivate: [AuthGuard] }
 ];
