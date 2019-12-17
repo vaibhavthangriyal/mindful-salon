@@ -82,6 +82,24 @@ router.get('/customer', authorizePrivilege("GET_ALL_USERS"), async (req, res) =>
     })
 })
 
+
+// //GET ALL CUSTOMERs
+router.get('/vendors', authorizePrivilege("GET_ALL_USERS"), async (req, res) => {
+  User
+    .find({ role: process.env.VENDOR_ROLE })
+    .populate("role")
+    .then(_customers => {
+      if (_customers.length > 0) {
+        return res.json({ status: 200, message: "ALL VENDORS", errors: false, data: _customers });
+      } else {
+        return res.json({ status: 200, message: "NO CUSTOMER FOUND", errors: false, data: _customers });
+      }
+    }).catch(err => {
+      res.status(500).json({ status: 500, errors: true, data: null, message: "Error while fetching users" });
+    })
+})
+
+
 // DELETE a user
 router.delete('/:id', authorizePrivilege("DELETE_USER"), (req, res) => {
   if (mongodb.ObjectID.isValid(req.params.id)) {
@@ -103,7 +121,12 @@ router.delete('/:id', authorizePrivilege("DELETE_USER"), (req, res) => {
 router.put('/id/:id', authorizePrivilege("UPDATE_USER"), (req, res) => {
   if (mongodb.ObjectID.isValid(req.params.id)) {
     // let user = (({ full_name, email, role }) => ({ full_name, email, role }))(req.body);
-    const result = userCtrl.verifyUpdate(req.body);
+    let result;
+    if (req.body.role === process.env.VENDOR_ROLE) {
+      result = userCtrl.verifyVendorUpdate(req.body);
+    } else {
+      result = userCtrl.verifyUpdate(req.body);
+    }
     if (!isEmpty(result.errors)) {
       return res.status(400).json({ status: 400, data: null, errors: result.errors, message: "Fields required" })
     }
@@ -140,6 +163,8 @@ router.put('/me', authorizePrivilege("UPDATE_USER_OWN"), (req, res) => {
   let result;
   if (req.user.role._id == process.env.DELIVERY_BOY_ROLE) {
     result = userCtrl.verifyDBoyProfileUpdateOwn(req.body)
+  } else if (req.user.role._id == process.env.VENDOR_ROLE) {
+    result = userCtrl.verifyVendorUpdate(req.body)
   } else {
     result = userCtrl.verifyUpdate(req.body)
   }
@@ -176,8 +201,11 @@ router.post("/", authorizePrivilege("ADD_NEW_USER"), (req, res) => {
   let result;
   if (req.body.role == process.env.DRIVER_ROLE)
     result = userCtrl.verifyAddDriver(req.body);
-  else
+  else if (req.body.role == process.env.VENDOR_ROLE) {
+    result = userCtrl.verifyVendorCreate(req.body);
+  } else {
     result = userCtrl.verifyCreate(req.body);
+  }
   if (isEmpty(result.errors)) {
     User.findOne({ email: result.data.email }, (err, doc) => {
       if (err)

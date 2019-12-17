@@ -1,191 +1,84 @@
-<!-- <mat-card class="example-card">
-  <mat-card-header>
-    <mat-card-title>Register</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <form class="example-form">
-      <table cellspacing="0" [formGroup]="userForm">
-        <tr>
-          <td>
-            <mat-form-field>
-              <input matInput placeholder="Fullname" formControlName="fullname" name="fullname" required>
-            </mat-form-field>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <mat-form-field>
-              <input matInput placeholder="Email" formControlName="email" name="email" required>
-              <mat-error *ngIf="email.invalid && email.errors.email">Invalid email address</mat-error>
-            </mat-form-field>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <mat-form-field>
-              <input matInput placeholder="Password" formControlName="password" type="password" name="password"
-                required>
-            </mat-form-field>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <mat-form-field>
-              <input matInput placeholder="Reapet Password" formControlName="repeatPassword" type="password"
-                name="repeatPassword" required>
-              <mat-error *ngIf="repeatPassword.invalid && repeatPassword.errors.passwordMatch">Password mismatch
-              </mat-error>
-            </mat-form-field>
-          </td>
-        </tr>
-      </table>
-    </form>
-  </mat-card-content>
-  <mat-card-actions>
-    <button mat-raised-button (click)="register()" color="primary">Register</button>
-    <span>Allrady have an account ? <a [routerLink]="['/auth/login']">login</a> here</span>
-  </mat-card-actions>
-</mat-card> -->
-
-
-<!-- <form [formGroup]="userForm" (ngSubmit)="submit()">
-  <div class="form-row">
-    <div class="form-group col-md-4">
-      <label for="inputEmail4">Employee ID *</label>
-      <input type="text" class="form-control" id="inputEmail4" placeholder="Employee ID here "
-        formControlName="employee_id">
-    </div>
-    <div class="form-group col-md-4">
-      <label for="inputPassword4">First Name *</label>
-      <input type="text" class="form-control" id="inputPassword4" placeholder="First Name *"
-        formControlName="first_name">
-    </div>
-    <div class="form-group col-md-4">
-      <label for="inputEmail4">Last Name</label>
-      <input type="text" class="form-control" id="inputEmail4" placeholder="Last Name" formControlName="last_name">
-    </div>
-  </div>
-  <div class="form-row">
-    <div class="form-group col-md-4">
-      <label for="inputEmail4">Email</label>
-      <input type="email" class="form-control" id="inputEmail4" placeholder="Email" formControlName="email">
-    </div>
-    <div class="form-group col-md-4">
-      <label for="inputPassword4">Password</label>
-      <input type="password" class="form-control" id="inputPassword4" placeholder="Password" formControlName="password">
-    </div>
-    <div class="form-group col-md-4">
-      <label for="inputEmail4">Mobile No *</label>
-      <input type="text" class="form-control" id="inputEmail4" placeholder="Mobile No *" formControlName="mobile_phone">
-    </div>
-  </div>
-  <div class="form-row">
-    <div class="form-group col-md-4">
-      <label for="inputPassword4">Home Phone</label>
-      <input type="text" class="form-control" id="inputPassword4" placeholder="Home Phone" formControlName="home_phone">
-    </div>
-    <div class="form-group col-md-4">
-      <label for="inputEmail4">Buisness Extension</label>
-      <input type="text" class="form-control" id="inputEmail4" placeholder="Buisness Extension"
-        formControlName="business_extension">
-    </div>
-    <div class="form-group col-md-4">
-      <label for="inputEmail4">Business Phone</label>
-      <input type="text" class="form-control" id="inputEmail4" placeholder="Business Phone"
-        formControlName="business_phone">
+<div class="container">
+  <div class="row">
+    <div class="col-md-8">
+      <h1 class="entry-title"><span>Sign Up</span> </h1>
+      <hr>
+      <form class="form-horizontal" name="signup" id="signup" [formGroup]="vendorForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label class="control-label col-sm-3">Email ID <span class="text-danger">*</span></label>
+          <div class="col-md-8 col-sm-9">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+              <input type="email" class="form-control" name="emailid" id="emailid" placeholder="Enter your Email ID"
+                value="" formControlName="email" required [ngClass]="{ 'is-invalid': submitted && f.email.errors }">
+              <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                <div *ngIf="f.email.errors.required">Email is required</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-3">Set Password <span class="text-danger">*</span></label>
+          <div class="col-md-5 col-sm-8">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+              <input type="password" class="form-control" name="password" id="password"
+                placeholder="Choose password (5-15 chars)" value="" formControlName="password" required
+                [ngClass]="{ 'is-invalid': submitted && f.password.errors }">
+              <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                <div *ngIf="f.password.errors.required">Password is required</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-3">Full Name <span class="text-danger">*</span></label>
+          <div class="col-md-8 col-sm-9">
+            <input type="text" class="form-control" name="mem_name" id="mem_name" placeholder="Enter your Name here"
+              value="" formControlName="full_name" required [ngClass]="{ 'is-invalid': submitted && f.full_name.errors }">
+              <div *ngIf="submitted && f.full_name.errors" class="invalid-feedback">
+                <div *ngIf="f.full_name.errors.required">Name is required</div>
+              </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-3">Contact No. <span class="text-danger">*</span></label>
+          <div class="col-md-5 col-sm-8">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-phone"></i></span>
+              <input type="text" class="form-control" name="contactnum" id="contactnum"
+                placeholder="Enter your Primary contact no." value="" formControlName="mobile_number" required [ngClass]="{ 'is-invalid': submitted && f.mobile_number.errors }">
+                <div *ngIf="submitted && f.mobile_number.errors" class="invalid-feedback">
+                  <div *ngIf="f.mobile_number.errors.required">Mobile Number is required</div>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-3">City <span class="text-danger">*</span></label>
+          <div class="col-md-5 col-sm-8">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-phone"></i></span>
+              <input type="text" class="form-control" name="city" id="city" placeholder="Enter your City"
+                value="" formControlName="city" required [ngClass]="{ 'is-invalid': submitted && f.city.errors }">
+                <div *ngIf="submitted && f.city.errors" class="invalid-feedback">
+                  <div *ngIf="f.city.errors.required">City is required</div>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-xs-offset-3 col-md-8 col-sm-9"><span class="text-muted"><span
+                class="label label-danger">Note:-</span> By clicking Sign Up, you agree to our <a href="#">Terms</a>
+              and that you have read our <a href="#">Policy</a>, including our <a href="#">Cookie Use</a>.</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-xs-offset-3 col-xs-10">
+            <input name="Submit" type="submit" value="Sign Up" class="btn btn-primary">
+          </div>
+        </div>
+      </form>
     </div>
   </div>
-  <div class="form-row">
-    <div class="form-group col-md-4">
-      <label for="inputEmail4">Joining Date *</label>
-      <input type="date" class="form-control" id="inputEmail4" placeholder="Joining Date *"
-        formControlName="joining_date">
-    </div>
-    <div class="form-group col-md-4">
-      <label for="inputPassword4">Manager Name</label>
-      <input type="text" class="form-control" id="inputPassword4" placeholder="Manager Name *"
-        formControlName="manager_id">
-    </div>
-    <div class="form-group col-md-4">
-      <label for="inputEmail4">Therapy Line </label>
-      <select class="custom-select" name="therapy_line" formControlName="therapy_line">
-        <option value="userRole" *ngFor="let userRole of allTherapies">{{userRole.therapyline}}</option>
-      </select>
-    </div>
-    <div class="form-group col-md-4">
-      <label for="inputEmail4">Therapy Line Id </label>
-      <select class="custom-select" name="therapy_line_id" formControlName="therapy_line_id">
-        <option value="userRole" *ngFor="let userRole of allTherapies">{{userRole.therapyline_id}}</option>
-      </select>
-    </div>
-    <div class="form-group col-md-4">
-      <label for="inputPassword4">Title</label>
-      <select class="custom-select" name="title" formControlName="title">
-        <option value="userRole" *ngFor="let userRole of title">{{userRole}}</option>
-      </select>
-    </div>
-  </div>
-  <div class="form-row">
-    <div class="form-group col-md-4">
-      <label for="inputEmail4">Region Name</label>
-      <select class="custom-select" name="region" formControlName="region">
-        <option value="userRole" *ngFor="let userRole of region">{{userRole}}</option>
-      </select>
-    </div>
-    <div class="form-group col-md-4">
-      <label for="inputPassword4">City Name</label>
-      <select class="custom-select" name="city" formControlName="city" formControlName="city">
-        <option value="userRole" *ngFor="let userRole of city">{{userRole}}</option>
-      </select>
-    </div>
-    <div class="form-group col-md-4">
-      <label for="inputEmail4">District Name</label>
-      <select class="custom-select" name="district" formControlName="district">
-        <option value="userRole" *ngFor="let userRole of district">{{userRole}}</option>
-      </select>
-    </div>
-  </div>
-  <div class="form-row">
-    <div class="form-group col-md-4">
-      <label for="inputEmail4">Postal Code </label>
-      <input type="text" class="form-control" id="inputEmail4" placeholder="Postal Code " formControlName="postal_code">
-    </div>
-    <div class="form-group col-md-4">
-      <label for="inputPassword4">Title</label>
-      <select class="custom-select" name="title" formControlName="title">
-        <option value="userRole" *ngFor="let userRole of title">{{userRole}}</option>
-      </select>
-    </div>
-    <div class="form-group col-md-4 d-flex align-items-end">
-      <label for="inputEmail4">Position</label>
-      <select class="custom-select" name="user_role" formControlName="position">
-        <option value="userRole" *ngFor="let userRole of userRoles">{{userRole}}</option>
-      </select>
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="inputAddress">Address</label>
-    <input type="text" class="form-control" id="inputAddress" formControlName="address" placeholder="1234 Main St">
-  </div>
-  <div class="form-group">
-    <label for="inputAddress2">Notes</label>
-    <input type="text" class="form-control" formControlName="notes" id="inputAddress2"
-      placeholder="Any extra notes here">
-  </div>
-  <!-- <div class="form-group">
-    <div class="custom-control custom-checkbox">
-      <input type="checkbox" class="custom-control-input" id="customCheck1">
-      <div class="custom-control custom-radio">
-        <input type="radio" id="customRadio1" name="is_active" formControlName="is_active" value="true"
-          class="custom-control-input">
-        <label class="custom-control-label" for="customRadio1">Activate</label>
-      </div>
-      <div class="custom-control custom-radio">
-        <input type="radio" id="customRadio2" name="is_active" formControlName="is_active" value="false"
-          class="custom-control-input">
-        <label class="custom-control-label" for="customRadio2">Deactivate</label>
-      </div>
-    </div>
-  </div> -->
-  <!-- <button type="submit" class="btn btn-primary">Submit Form</button>
-</form> --> -->
+</div>

@@ -1,0 +1,17 @@
+<div class="container">
+  <div class="row">
+    <div class="card">
+      <div class="card-header">
+        Banner Customisation
+      </div>
+      <div class="card-body">
+        <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
+
+        <input type='file' (change)="onSelectFile($event)" class="form-control" multiple>
+      </div>
+      <div class="card-footer">
+        <button type="submit" (click)="uploadImages()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>

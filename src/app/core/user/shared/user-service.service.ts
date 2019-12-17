@@ -28,7 +28,10 @@ export class UserService {
   getAllUsers() {
     return this.http.get(this.url, { headers: this.headers });
   }
-  
+
+  getAllVendors() {
+    return this.http.get(this.url + '/vendors', { headers: this.headers });
+  }
 
   getUserByManager(id) {
     return this.http.get(this.url + '/flmId/' + id, { headers: this.headers });
@@ -42,8 +45,8 @@ export class UserService {
     return this.http.delete(this.url + '/' + id, { headers: this.headers });
   }
 
-  updateUser(id, user) {
-    return this.http.put(this.url + '/' + id, user, { headers: this.headers });
+  updateUser(user, id) {
+    return this.http.put(this.url + '/id/' + id, user, { headers: this.headers });
   }
 
   getUser(id) {

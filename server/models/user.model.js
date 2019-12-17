@@ -22,6 +22,7 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String, // required: true
   },
+  description: { type: String, lowercase: true, trim: true },
   landmark: { type: String },
   street_address: { type: String },
   H_no_society: { type: String },

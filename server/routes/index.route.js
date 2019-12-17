@@ -31,6 +31,8 @@ const eventTypeRoutes = require("./event.type.route");
 const eventLeadRoutes = require("./event.lead.route");
 const eventRoutes = require("./event.route");
 const paymentRoutes = require("./payment.route");
+const vendorRoutes = require("./user/vendor.route");
+const callLogRoutes = require("./log/calllog.route");
 const marketingMaterialRoutes = require("./marketing.material.route");
 const imageUploadRoutes = require("./upload.image.route");
 const authMiddleware = require("../middleware/authMiddleware");
@@ -70,6 +72,10 @@ router.use('/product', validateEnv, authMiddleware, productRoute);
 // router.use('/pcattribute', validateEnv, authMiddleware, productCategoryAttributeRoutes);
 // router.use('/ptype', validateEnv, authMiddleware, productTypeRoute);
 // router.use('/brand', validateEnv, authMiddleware, brandRoutes);
+
+// VEndor APIs
+router.use('/vendor', vendorRoutes);
+router.use('/calllog', validateEnv, authMiddleware, callLogRoutes);
 
 router.use('/challan', validateEnv, authMiddleware, challanRoutes);
 router.use('/banner', validateEnv, authMiddleware, bannerRoutes);

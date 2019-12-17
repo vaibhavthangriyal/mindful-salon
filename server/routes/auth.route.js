@@ -346,3 +346,79 @@ router.get('/me', async (req, res) => {
     res.status(401).json({ status: 401, data: null, errors: true, message: "Unauthorized" })
   }
 });
+
+
+router.post('/vendorregister', async (req, res) => {
+  if (req.headers.token) {
+    if (typeof req.headers.token == "string" && req.headers.token.trim() !== "") {
+      try {
+        let payload = jwt.verify(req.headers.token, process.env.JWT_SECRET)
+        User.findById(payload._id, "-password")
+          .populate("role")
+          .exec()
+          .then(doc => {
+            if (doc) {
+              let u = doc.toObject();
+              // delete u.hashedPassword;
+              req.user = u;
+              res.json({ status: 200, data: u, errors: false, message: "You are already logged in!" });
+            } else {
+              res.status(403).json({ status: 403, data: null, errors: true, message: "Forbidden" });
+            }
+          })
+      } catch (err) {
+        if (err) {
+          res.status(400).json({ status: 400, data: null, errors: true, message: "Invalid token" });
+        }
+      }
+    } else {
+      res.status(400).json({ status: 400, data: null, errors: true, message: "Invalid token" })
+    }
+  } else {
+    result = await UserController.verifyVendorRegister(req.body);
+    if (!isEmpty(result.errors)) {
+      console.log("HAS ERRORS");
+      return res.status(400).json({ status: 400, data: null, errors: result.errors, message: "Fields required" });
+    }
+    User.findOne({ email: result.data.email }, (e, d) => {
+      if (e) {
+        return res.status(500).json({ status: 500, data: null, errors: true, message: "Error while verifying user details" })
+      }
+      if (d) {
+        return res.json({ status: 200, errors: true, data: null, message: "Email already exists" })
+      } else {
+        bcrypt.genSalt(10, function (err, salt) {
+          bcrypt.hash(result.data.password, salt, function (err, hash) {
+            if (err)
+              return res.status(500).json({ status: 500, data: null, errors: true, message: "Something went wrong with your password" });
+            result.data.password = hash;
+            result.data.role = process.env.VENDOR_ROLE;
+            result.data.is_active = true;
+            result.data.user_id = "VEN" + moment().year() + moment().month() + moment().date() + moment().hour() + moment().minute() + moment().second() + moment().milliseconds() + Math.floor(Math.random() * (99 - 10) + 10);
+            const newUser = new User(result.data);
+            newUser.save().then(doc => {
+              doc.populate("role", (e, d) => {
+                // const u = { _id: d._id, role: d.role._id };
+                jwt.sign({ _id: d._id }, process.env.JWT_SECRET, function (err, token) {
+                  if (err) {
+                    console.log(err);
+                    res.status(500).json({ message: "Error while generating token", status: 500, errors: true, data: null });
+                  }
+                  else {
+                    let u = d.toObject();
+                    delete u.password;
+                    req.user = u;
+                    res.json({ message: "User registered successfully", status: 200, errors: false, data: { token, user: u } });
+                  }
+                });
+              })
+            }).catch(e => {
+              console.log(e);
+              res.status(500).json({ message: "Error while registering user", status: 500, errors: true, data: null });
+            })
+          });
+        });
+      }
+    })
+  }
+});
