@@ -33,6 +33,7 @@ const eventRoutes = require("./event.route");
 const paymentRoutes = require("./payment.route");
 const vendorRoutes = require("./user/vendor.route");
 const callLogRoutes = require("./log/calllog.route");
+const reviewRoutes = require("./review/vendor.review.route");
 const marketingMaterialRoutes = require("./marketing.material.route");
 const imageUploadRoutes = require("./upload.image.route");
 const authMiddleware = require("../middleware/authMiddleware");
@@ -76,6 +77,7 @@ router.use('/product', validateEnv, authMiddleware, productRoute);
 // VEndor APIs
 router.use('/vendor', vendorRoutes);
 router.use('/calllog', validateEnv, authMiddleware, callLogRoutes);
+router.use('/review', validateEnv, authMiddleware, reviewRoutes);
 
 router.use('/challan', validateEnv, authMiddleware, challanRoutes);
 router.use('/banner', validateEnv, authMiddleware, bannerRoutes);

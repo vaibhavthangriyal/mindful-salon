@@ -39,6 +39,7 @@ import { VendorComponent } from './core/vendor/vendor.component';
 import { VendorRoutingModule } from './core/vendor/shared/vendor.routing';
 import { SettingsComponent } from './core/settings/settings.component';
 import { NgxGalleryModule } from 'ngx-gallery';
+import { CalllogComponent } from './core/vendor/calllog/calllog.component';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { NgxGalleryModule } from 'ngx-gallery';
     CoreComponent,
     VendorComponent,
     SettingsComponent,
+    CalllogComponent,
   ],
   imports: [
     BrowserModule,
