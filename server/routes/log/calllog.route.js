@@ -1,5 +1,5 @@
 const CallLog = require("../../models/log/calllog.model");
-const CallLogController = require("../../controllers/logs/calllog.controller");
+const CallLogController = require("../../controllers/log/calllog.controller");
 const router = require("express").Router();
 const isEmpty = require('../../utils/is-empty');
 const mongodb = require('mongoose').Types;
