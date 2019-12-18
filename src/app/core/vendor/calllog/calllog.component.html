@@ -11,6 +11,7 @@
             <th class="wd-25p">Vendor</th>
             <th class="wd-20p">Customer Name</th>
             <th class="wd-20p">Customer Email </th>
+            <th class="wd-20p">Customer Mobile </th>
             <th class="wd-20p">Date</th>
           </tr>
         </thead>
@@ -18,7 +19,9 @@
           <tr *ngFor="let callLog of allCallLogs; let i = index" class="text-center">
             <td>{{callLog?.vendor?.full_name | titlecase}} </td>
             <td>{{callLog?.customer?.full_name | titlecase}}</td>
-            <td>{{callLog?.customer?.email | titlecase }}</td>
+            <td>{{callLog?.customer?.email | lowercase}}</td>
+            <td *ngIf="callLog.customer.mobile_number">{{callLog?.customer?.mobile_number | number }}</td>
+            <td *ngIf="!callLog.customer.mobile_number">-</td>
             <td>{{callLog?.created_date | date:'dd/MM/yy hh:mm aa'}}</td>
           </tr>
         </tbody>

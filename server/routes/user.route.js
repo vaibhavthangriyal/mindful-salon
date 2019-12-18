@@ -19,17 +19,41 @@ const S3 = new AWS.S3({
 });
 
 
+//GET OWN USER
+router.get('/me', authorizePrivilege("GET_ALL_USERS"), async (req, res) => {
+  User.findById(req.user._id).
+    populate('role')
+    .then(_user => {
+      // _user.populate('role')
+        // .then((_user) => {
+          if (_user) {
+            return res.json({ status: 200, message: "Own Data", errors: false, data: _user });
+          } else {
+            return res.json({ status: 200, message: "Own Data Not Found", errors: false, data: null });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          return res.json({ status: 200, message: "Error While Populating", errors: true, data: null });
+        })
+    // }).catch((err) => {
+    //   console.log(err);
+    //   return res.json({ status: 200, message: "Internal Server Error", errors: true, data: null });
+    // })
+})
+
 //GET all users
 router.get('/', authorizePrivilege("GET_ALL_USERS"), async (req, res) => {
   try {
     const allUsers = await User
-      .find({ _id: { $ne: req.user._id }, role: { $ne: process.env.CUSTOMER_ROLE } })
-      .populate("role ")
+      .find({ _id: { $ne: req.user._id }, role: process.env.SALES_ROLE })
+      .populate("role")
       .exec();
     // console.log(allUsers);
     return res.json({ status: 200, message: "All users", errors: false, data: allUsers });
   }
   catch (err) {
+    console.log(err);
     return res.status(500).json({ status: 500, errors: true, data: null, message: "Error while fetching users" });
   }
 })
@@ -83,7 +107,7 @@ router.get('/customer', authorizePrivilege("GET_ALL_USERS"), async (req, res) =>
 })
 
 
-// //GET ALL CUSTOMERs
+// //GET ALL VEDNORS
 router.get('/vendors', authorizePrivilege("GET_ALL_USERS"), async (req, res) => {
   User
     .find({ role: process.env.VENDOR_ROLE })
@@ -171,28 +195,33 @@ router.put('/me', authorizePrivilege("UPDATE_USER_OWN"), (req, res) => {
   if (!isEmpty(result.errors)) {
     return res.status(400).json({ status: 400, data: null, errors: result.errors, message: "Fields required" })
   }
-  User.findByIdAndUpdate(req.user._id, { $set: result.data }, { new: true }, (err, doc) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).json({ status: 500, errors: true, data: null, message: "Error while updating user data" });
-    }
-    else {
-      doc.populate("role route").execPopulate().then(d => {
-        if (!d)
-          return res.status(200).json({ status: 200, errors: true, data: doc, message: "No User Found" });
-        else {
-          d = d.toObject();
-          delete d.password;
-          console.log("Updated User", d);
-          res.status(200).json({ status: 200, errors: false, data: d, message: "Updated User" });
+  bcrypt.genSalt(10, function (err, salt) {
+    bcrypt.hash(result.data.password, salt, function (err, hash) {
+      result.data.password = hash;
+      User.findByIdAndUpdate(req.user._id, { $set: result.data }, { new: true }, (err, doc) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({ status: 500, errors: true, data: null, message: "Error while updating user data" });
         }
-      }
-      ).catch(e => {
-        console.log(e);
-        return res.status(500).json({ status: 500, errors: true, data: null, message: "Error while updating user details" });
-      });
-    }
-  })
+        else {
+          doc.populate("role route").execPopulate().then(d => {
+            if (!d)
+              return res.status(200).json({ status: 200, errors: true, data: doc, message: "No User Found" });
+            else {
+              d = d.toObject();
+              delete d.password;
+              console.log("Updated User", d);
+              res.status(200).json({ status: 200, errors: false, data: d, message: "Updated User" });
+            }
+          }
+          ).catch(e => {
+            console.log(e);
+            return res.status(500).json({ status: 500, errors: true, data: null, message: "Error while updating user details" });
+          });
+        }
+      })
+    })
+  });
 })
 
 

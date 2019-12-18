@@ -6,17 +6,16 @@
         data-target="#modal3">Add New User</a>
       <a class="btn btn-primary text-white mx-1 float-right" (click)="resetForm()" data-toggle="modal"
         data-target="#modal2">Upload CSV</a>
-      <select class="form-control float-right" (change)="getUserbyRole($event)" 
-        style="width:20%" name="customer_name">
-        <option  selected disabled>Select User Role</option>
-        <option  value="all">ALL</option>
-        <option [ngValue]="userRole._id"  *ngFor="let userRole of allUserRoles">
+      <select class="form-control float-right" (change)="getUserbyRole($event)" style="width:20%" name="customer_name">
+        <option selected disabled>Select User Role</option>
+        <option value="all">ALL</option>
+        <option [ngValue]="userRole._id" *ngFor="let userRole of allUserRoles">
           {{userRole.name | titlecase}}</option>
       </select>
     </div>
     <div class="card-body">
-      <table id="example1" class="table table-hover " datatable [dtOptions]="dtOptions"
-        [dtTrigger]="dtTrigger" *ngIf="fullTable">
+      <table id="example1" class="table table-hover " datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+        *ngIf="fullTable">
         <thead>
           <tr>
             <th class="wd-25p">Name</th>
@@ -55,17 +54,15 @@
       <div class="modal-body">
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
           <div class="form-row">
-              <div class="form-group col-md-4">
+            <div class="form-group col-md-4">
               <label for="inputPassword4">Name</label>
-              
-                <input type="text" class="form-control" placeholder="Name" formControlName="full_name" required
-                  [ngClass]="{ 'is-invalid': submitted && f.full_name.errors }">
-                <div *ngIf="submitted && f.full_name.errors" class="invalid-feedback">
-                  <div *ngIf="f.full_name.errors.required">Name is required</div>
-               
+
+              <input type="text" class="form-control" placeholder="Name" formControlName="full_name" required
+                [ngClass]="{ 'is-invalid': submitted && f.full_name.errors }">
+              <div *ngIf="submitted && f.full_name.errors" class="invalid-feedback">
+                <div *ngIf="f.full_name.errors.required">Name is required</div>
               </div>
-              </div>
-            
+            </div>
             <div class="form-group col-md-4">
               <label for="inputEmail4">Email</label>
               <input type="email" class="form-control" placeholder="Email" formControlName="email" required
@@ -75,18 +72,18 @@
               </div>
             </div>
             <div class="form-group col-md-4">
-                <label for="inputEmail4">Position</label>
-                <select class="custom-select" name="role" formControlName="role"
-                  [ngClass]="{ 'is-invalid': submitted && f.role.errors }" required (change)="driverField($event)">
-                  <option value="" selected disabled>Role*</option>
-                  <option [ngValue]="userRole._id" *ngFor="let userRole of allUserRoles">{{userRole.name}}
-                  </option>
-                </select>
-                <div *ngIf="submitted && f.role.errors" class="invalid-feedback">
-                  <div *ngIf="f.role.errors.required">Role is required</div>
-                </div>
+              <label for="inputEmail4">Position</label>
+              <select class="custom-select" name="role" formControlName="role"
+                [ngClass]="{ 'is-invalid': submitted && f.role.errors }" required (change)="driverField($event)">
+                <option value="" selected disabled>Role*</option>
+                <option [ngValue]="userRole._id" *ngFor="let userRole of allUserRoles">{{userRole.name}}
+                </option>
+              </select>
+              <div *ngIf="submitted && f.role.errors" class="invalid-feedback">
+                <div *ngIf="f.role.errors.required">Role is required</div>
               </div>
             </div>
+          </div>
           <div class="form-row">
             <div class="form-group col-md-4">
               <label for="inputPassword4">Password</label>
@@ -101,7 +98,6 @@
                 <div *ngIf="f.password.errors.required">Password is required</div>
               </div>
             </div>
-          
             <div class="form-group col-md-4">
               <label for="inputPassword4">Confirm Password</label>
               <div class="input-group mb-3">
@@ -114,114 +110,93 @@
               </div>
             </div>
             <div class="form-group col-md-4">
-                <label for="inputEmail4">Mobile No</label>
-                <input type="text" class="form-control" placeholder="Mobile No*" maxlength="10"
-                  formControlName="mobile_number" required
-                  [ngClass]="{ 'is-invalid': submitted && f.mobile_number.errors }">
-                <div *ngIf="submitted && f.mobile_number.errors" class="invalid-feedback">
-                  <div *ngIf="f.mobile_number.errors.required">Mobile Phone is required</div>
-                </div>
-              </div>
-          </div>
-          
-          
-            
-            
-            
-          
-            <div class="form-row">
-                
-                
-              <div class="form-group col-md-4">
-                <label for="inputEmail4">Street Address</label>
-                <input type="text" class="form-control" placeholder="Street Address" formControlName="street_address" required
-                  [ngClass]="{ 'is-invalid': submitted && f.street_address.errors }">
-                <div *ngIf="submitted && f.street_address.errors" class="invalid-feedback">
-                  <div *ngIf="f.street_address.errors.required">Street Address is required</div>
-                </div>
-              </div>
-              <div class="form-group col-md-4">
-                  <label for="inputEmail4">City</label>
-                  <input type="text" class="form-control" placeholder="City" formControlName="city" required
-                    [ngClass]="{ 'is-invalid': submitted && f.city.errors }">
-                  <div *ngIf="submitted && f.city.errors" class="invalid-feedback">
-                    <div *ngIf="f.city.errors.required">City is required</div>
-                  </div>
-                </div>
-
-                <div class="form-group col-md-4">
-                    <label for="inputEmail4">Landmark</label>
-                    <input type="text" class="form-control" placeholder="Landmark" formControlName="landmark" required
-                      [ngClass]="{ 'is-invalid': submitted && f.landmark.errors }">
-                    <div *ngIf="submitted && f.landmark.errors" class="invalid-feedback">
-                      <div *ngIf="f.landmark.errors.required">Landmark is required</div>
-                    </div>
-                  </div>
-                
-              </div>
-
-              <div class="form-row">
-
-                <div class="form-group col-md-4">
-                  <label for="inputEmail4">Date Of Birth</label>
-                  <input type="date" class="form-control" placeholder="Street Address" formControlName="dob" required
-                    [ngClass]="{ 'is-invalid': submitted && f.dob.errors }">
-                  <div *ngIf="submitted && f.dob.errors" class="invalid-feedback">
-                    <div *ngIf="f.dob.errors.required">DOB is required</div>
-                  </div>
-                </div>
-                <div class="form-group col-md-4">
-                    <label for="inputEmail4">Gender</label>
-                      <div (change)="selectGender($event)">
-                        <label class="radio-inline">
-                          <input type="radio" value="male" name="optradio" >Male
-                        </label>
-                        <label class="radio-inline">
-                          <input type="radio" value="female" name="optradio">Female
-                        </label>
-                      </div>
-                  </div>
-              </div>
-             
-              <div class="form-row" >   
-                <div class="form-group col-md-4" *ngIf="showLicenceField">
-                  <label for="inputEmail4">License Number</label>
-                  <input type="text" class="form-control"  required (change)="licenseNumber($event)">
-                </div>
-
-                  <div class="form-row offset-md-4">
-                      <div class="custom-file">
-                          <label for="inputEmail4">Profile Picture</label>
-                          <input type="file" class="custom-file-input" id="customFile" formControlName="profile_picture" (change)="selectFile($event)">
-                          <label class="custom-file-label" for="customFile">Profile Picture</label>
-                        </div>
-                    
-                    </div>
-          <div class="form-row offset-md-4">
-            <div class="form-group text-center col-md-4">
-              
-              <p-inputSwitch class="form-control text-center" formControlName="is_active" required
-                [ngClass]="{ 'is-invalid': submitted && f.is_active.errors }"></p-inputSwitch>
-              <div *ngIf="submitted && f.is_active.errors" class="invalid-feedback">
-                <div *ngIf="f.is_active.errors.required">Status is required</div>
+              <label for="inputEmail4">Mobile No</label>
+              <input type="text" class="form-control" placeholder="Mobile No*" maxlength="10"
+                formControlName="mobile_number" required
+                [ngClass]="{ 'is-invalid': submitted && f.mobile_number.errors }">
+              <div *ngIf="submitted && f.mobile_number.errors" class="invalid-feedback">
+                <div *ngIf="f.mobile_number.errors.required">Mobile Phone is required</div>
               </div>
             </div>
           </div>
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label for="inputEmail4">Street Address</label>
+              <input type="text" class="form-control" placeholder="Street Address" formControlName="street_address"
+                required [ngClass]="{ 'is-invalid': submitted && f.street_address.errors }">
+              <div *ngIf="submitted && f.street_address.errors" class="invalid-feedback">
+                <div *ngIf="f.street_address.errors.required">Street Address is required</div>
               </div>
-              <br>  
+            </div>
+            <div class="form-group col-md-4">
+              <label for="inputEmail4">City</label>
+              <input type="text" class="form-control" placeholder="City" formControlName="city" required
+                [ngClass]="{ 'is-invalid': submitted && f.city.errors }">
+              <div *ngIf="submitted && f.city.errors" class="invalid-feedback">
+                <div *ngIf="f.city.errors.required">City is required</div>
+              </div>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="inputEmail4">Landmark</label>
+              <input type="text" class="form-control" placeholder="Landmark" formControlName="landmark" required
+                [ngClass]="{ 'is-invalid': submitted && f.landmark.errors }">
+              <div *ngIf="submitted && f.landmark.errors" class="invalid-feedback">
+                <div *ngIf="f.landmark.errors.required">Landmark is required</div>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label for="inputEmail4">Date Of Birth</label>
+              <input type="date" class="form-control" placeholder="Street Address" formControlName="dob" required
+                [ngClass]="{ 'is-invalid': submitted && f.dob.errors }">
+              <div *ngIf="submitted && f.dob.errors" class="invalid-feedback">
+                <div *ngIf="f.dob.errors.required">DOB is required</div>
+              </div>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="inputEmail4">Gender</label>
+              <div (change)="selectGender($event)">
+                <label class="radio-inline">
+                  <input type="radio" value="male" name="optradio">Male
+                </label>
+                <label class="radio-inline">
+                  <input type="radio" value="female" name="optradio">Female
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-4" *ngIf="showLicenceField">
+              <label for="inputEmail4">License Number</label>
+              <input type="text" class="form-control" required (change)="licenseNumber($event)">
+            </div>
+
+            <div class="form-row offset-md-4">
+              <div class="custom-file">
+                <label for="inputEmail4">Profile Picture</label>
+                <input type="file" class="custom-file-input" id="customFile" formControlName="profile_picture"
+                  (change)="selectFile($event)">
+                <label class="custom-file-label" for="customFile">Profile Picture</label>
+              </div>
+            </div>
+            <div class="form-row offset-md-4">
+              <div class="form-group text-center col-md-4">
+                <p-inputSwitch class="form-control text-center" formControlName="is_active" required
+                  [ngClass]="{ 'is-invalid': submitted && f.is_active.errors }"></p-inputSwitch>
+                <div *ngIf="submitted && f.is_active.errors" class="invalid-feedback">
+                  <div *ngIf="f.is_active.errors.required">Status is required</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
           <div class="text-center">
             <button type="submit" class="text-center btn btn-primary text-center">Submit
               Form</button>
           </div>
         </form>
-
-
-
-
-
-
-
-
       </div>
     </div>
   </div>
@@ -256,126 +231,56 @@
   </div>
 </div>
 
-<!-- Modal -->
-<!-- <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-  aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
+<div *ngIf="viewArray" class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title ml-auto font-weight-bold" id="exampleModalLongTitle">User Details</h5>
+        <h5 class="modal-title ml-auto font-weight-bold" id="exampleModalLabel">User Details</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-          <div class="form-group">
-            <label>Enter Name</label>
-            <input type="text" formControlName="full_name" class="form-control"
-              [ngClass]="{ 'is-invalid': submitted && f2.full_name.errors }" />
-            <div *ngIf="submitted && f2.full_name.errors" class="invalid-feedback">
-              <div *ngIf="f2.full_name.errors.required">Name is required</div>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Enter Mobile Number</label>
-            <input type="text" formControlName="mobile_number" class="form-control"
-              [ngClass]="{ 'is-invalid': submitted && f2.mobile_number.errors }" />
-            <div *ngIf="submitted && f2.mobile_number.errors" class="invalid-feedback">
-              <div *ngIf="f2.mobile_number.errors.required">Mobile Number is required</div>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Landmark</label>
-            <input type="text" formControlName="landmark" class="form-control"
-              [ngClass]="{ 'is-invalid': submitted && f2.landmark.errors }" />
-            <div *ngIf="submitted && f2.landmark.errors" class="invalid-feedback">
-              <div *ngIf="f2.landmark.errors.required">Landmark is required</div>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Enter Street Address</label>
-            <input type="text" formControlName="street_address" class="form-control"
-              [ngClass]="{ 'is-invalid': submitted && f2.street_address.errors }" />
-            <div *ngIf="submitted && f2.street_address.errors" class="invalid-feedback">
-              <div *ngIf="f2.street_address.errors.required">Street Address is required</div>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Enter City </label>
-            <input type="text" formControlName="city" class="form-control"
-              [ngClass]="{ 'is-invalid': submitted && f2.city.errors }" />
-            <div *ngIf="submitted && f2.city.errors" class="invalid-feedback">
-              <div *ngIf="f2.city.errors.required">City is required</div>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Enter DOB</label>
-            <input type="date" formControlName="dob" class="form-control"
-              [ngClass]="{ 'is-invalid': submitted && f2.dob.errors }" />
-            <div *ngIf="submitted && f2.dob.errors" class="invalid-feedback">
-              <div *ngIf="f2.dob.errors.required">DOB is required</div>
-            </div>
-          </div>
-          <div class="form-group">
-            <button class="btn btn-primary">Save</button>
-          </div>
-        </form>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div> -->
-  <div *ngIf="viewArray" class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title ml-auto font-weight-bold" id="exampleModalLabel">User Details</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
 
-            <div class="form-group">
-                <!-- <label>User Image</label> -->
+        <div class="form-group">
+          <!-- <label>User Image</label> -->
           <div class="col-sm-3 col-md-2 col-lg text-center" *ngIf="showImage">
             <div class="avatar avatar-xxl "><img src="{{image}}" class="rounded-circle" alt=""></div>
           </div>
-            </div>
+        </div>
 
-            <div class="form-group">
-                <label> Name</label>
-                <input type="text"  class="form-control" [(ngModel)]="viewArray.full_name" disabled />
-            </div>
-            <div class="form-group">
-                <label>Street Address</label>
-                <input type="text"  class="form-control" [(ngModel)]="viewArray.street_address" disabled />
-            </div>
-            <div class="form-group">
-                <label>City</label>
-                <input type="text"  class="form-control" [(ngModel)]="viewArray.city" disabled />
-            </div>  
-            <!-- <div class="form-group">
+        <div class="form-group">
+          <label> Name</label>
+          <input type="text" class="form-control" [(ngModel)]="viewArray.full_name" disabled />
+        </div>
+        <div class="form-group">
+          <label>Street Address</label>
+          <input type="text" class="form-control" [(ngModel)]="viewArray.street_address" disabled />
+        </div>
+        <div class="form-group">
+          <label>City</label>
+          <input type="text" class="form-control" [(ngModel)]="viewArray.city" disabled />
+        </div>
+        <!-- <div class="form-group">
                 <label>DOB</label>
                 <input type="text"  class="form-control" [(ngModel)]="viewArray.dob" disabled />
             </div> -->
-            <div class="form-group">
-                <label>Mobile Number</label>
-                <input type="text"  class="form-control" [(ngModel)]="viewArray.mobile_number" disabled />
-            </div>
-            
-            <!-- <div class="form-group">
+        <div class="form-group">
+          <label>Mobile Number</label>
+          <input type="text" class="form-control" [(ngModel)]="viewArray.mobile_number" disabled />
+        </div>
+
+        <!-- <div class="form-group">
                 <label>Landmark</label>
                 <input type="text"  class="form-control" [(ngModel)]="viewArray.landmark" disabled />
             </div>            -->
 
 
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
+</div>

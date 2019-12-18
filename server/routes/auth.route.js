@@ -313,8 +313,6 @@ router.post('/verifyotp/:type', async (req, res) => {
 router.get('/me', async (req, res) => {
   if (req.headers.token) {
     if (typeof req.headers.token == "string" && req.headers.token.trim() !== "") {
-      // console.log("HAS TOKEN");
-      // if (req.method === "GET") {
       jwt.verify(req.headers.token, process.env.JWT_SECRET, (err, payload) => {
         if (err) {
           console.log(err);

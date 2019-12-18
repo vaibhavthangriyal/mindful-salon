@@ -6,6 +6,8 @@ import { DomSanitizer } from "@angular/platform-browser";
 
 
 import { AuthService } from './auth/auth.service';
+import { ProfileService } from './core/user/profile/shared/profile.service';
+import { ResponseModel } from './shared/shared.model';
 
 @Component({
   selector: 'app-root',
@@ -23,10 +25,19 @@ export class AppComponent implements OnInit, OnChanges {
     private router: Router,
     private domSanitizer: DomSanitizer,
     private matIconRegistry: MatIconRegistry,
+    private profileService: ProfileService
   ) {
     this.array = this.authService.userData;
     this.registerSvgIcons();
     this.user = localStorage.getItem('user');
+    this.profileService.getOwnInformation().subscribe((res: ResponseModel) => {
+      if (res.errors) {
+        console.log('ERROR');
+      } else {
+        this.user = res.data;
+        console.log(res.data);
+      }
+    });
   }
 
   ngOnChanges() {
@@ -42,12 +53,7 @@ export class AppComponent implements OnInit, OnChanges {
     });
   }
 
-  public ngOnInit() {
-    this.authService.$userSource.subscribe((user) => {
-      console.log(user);
-      this.user = user;
-      this.loggedin = true;
-    });
+  ngOnInit() {
   }
 
   logout(): void {
@@ -60,12 +66,7 @@ export class AppComponent implements OnInit, OnChanges {
     this.router.navigate([link]);
   }
 
-  // tslint:disable-next-line: use-life-cycle-interface
-  ngOnDestroy() {
-    if (this.userSubscription) {
-      this.userSubscription.unsubscribe();
-    }
-  }
+
 
   registerSvgIcons() {
     [

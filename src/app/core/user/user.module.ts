@@ -8,6 +8,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { DataTablesModule } from 'angular-datatables';
 import { UserroleComponent } from './userrole/userrole.component';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
   imports: [
@@ -21,7 +22,8 @@ import { InputSwitchModule } from 'primeng/inputswitch';
   ],
   declarations: [
     UserComponent,
-    UserroleComponent
+    UserroleComponent,
+    ProfileComponent
   ],
   exports:[
     UserRoutingModule
