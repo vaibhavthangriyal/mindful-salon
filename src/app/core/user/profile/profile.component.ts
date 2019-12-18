@@ -11,8 +11,11 @@ import { Title } from '@angular/platform-browser';
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
-
+  confirmPassword: string;
+  passwordMatched: Boolean = false;
   profileForm: FormGroup;
+  submitted: Boolean = false;
+
   constructor(private profileService: ProfileService, private toasterService: ToastrService, private formBuilder: FormBuilder,
     private titleService: Title) {
     this.getInformation();
@@ -38,6 +41,10 @@ export class ProfileComponent implements OnInit {
       dob: [new Date(), Validators.required],
       gender: ['male']
     });
+  }
+
+  get f() {
+    return this.profileForm.controls;
   }
 
   getInformation() {
@@ -78,5 +85,13 @@ export class ProfileComponent implements OnInit {
         this.setFormValue(res.data);
       }
     });
+  }
+
+  selectFile(event) {
+    console.log(event);
+  }
+  checkPassword() { }
+  selectGender(event) {
+    console.log(event);
   }
 }
