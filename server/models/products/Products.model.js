@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 const ProductSchema = new Schema({
     brand: { type: mongoose.Schema.Types.ObjectId, ref: 'brand', required: true, lowercase: true, trim: true },
     category: { type: mongoose.Schema.Types.ObjectId, ref: "product_category", required: true },
-    created_by: { type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true },
+    created_by: { type: mongoose.Schema.Types.ObjectId, ref: 'vendor', required: true },
     created_date: { type: Date, default: Date.now },
     details: { type: String, default: "", lowercase: true, trim: true },
     is_active: { type: Boolean, default: true, required: true },
