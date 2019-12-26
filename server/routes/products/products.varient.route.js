@@ -35,7 +35,7 @@ router.get("/", authorizePrivilege("GET_ALL_PRODUCT_VARIENTS"), (req, res) => {
     //     .then(docs => {
     ProductVarient
         .find({})
-        .populate({path:"product attributes.attribute attributes.option",populate:{path:"created_by",select:"-password"}})
+        .populate({ path: "product attributes.attribute attributes.option", populate: { path: "created_by", select: "-password" } })
         .then(docs => {
             if (docs.length > 0)
                 res.json({ status: 200, data: docs, errors: false, message: "ALL PRODUCT VARIENTS " });
@@ -69,7 +69,7 @@ router.get("/bycategory/:id", authorizePrivilege("GET_ALL_PRODUCT_VARIENTS"), (r
             { $replaceRoot: { newRoot: "$products" } }
         ]).exec()
             .then(docs => {
-                ProductVarient.populate(docs, [{ path: "attributes.attribute attributes.option" }, { path: "product", populate: { path: "brand category", select: "name" } }]).then(docs => {
+                ProductVarient.populate(docs, [{ path: "attributes.attribute attributes.option" }, { path: "product", populate: { path: "brand category created_by",select:"-password"} }]).then(docs => {
                     if (docs.length > 0)
                         res.json({ status: 200, data: docs, errors: false, message: "ALL PRODUCT VARIENTS " });
                     else
