@@ -79,6 +79,7 @@ const vendorRegisterSchema = Joi.object({
   mobile_number: Joi.string().required()
   // role:Joi.string().required()
 })
+
 const customerAddSchema = Joi.object({
   full_name: Joi.string().required(),
   mobile_number: Joi.string().required(),
@@ -113,35 +114,6 @@ const userMobileOtpSchema = Joi.object({
 const userLoginSchema = Joi.object({
   password: Joi.string().required(),
   email: Joi.string().email().required()
-})
-const driverAddSchema = Joi.object({
-  full_name: Joi.string().required(),
-  password: Joi.string().required(),
-  email: Joi.string().email().required(),
-  role: Joi.string().required(),
-  mobile_number: Joi.string().required(),
-  dl_number: Joi.string().required(),
-  is_active: Joi.boolean().required(),
-  gender: Joi.string().required(),
-  dob: Joi.date().required(),
-  profile_picture: Joi.string().optional(),
-  latitude: Joi.string().optional(),
-  longitutde: Joi.string().optional(),
-  landmark: Joi.string().optional(),
-  street_address: Joi.string().optional(),
-  city: Joi.string().optional()
-})
-const dBoyProfileUpdateOwnSchema = Joi.object({
-  full_name: Joi.string().required(),
-  H_no_society: Joi.string().optional(),
-  landmark: Joi.string().optional(),
-  dob: Joi.date().optional(),
-  dl_number: Joi.string().optional(),
-  emergency_contact: Joi.string().optional(),
-  street_address: Joi.string().optional(),
-  permanent_address: Joi.string().optional(),
-  vehicle_type: Joi.string().optional(),
-  'kyc.documentType': Joi.string().optional()
 })
 
 function verifyCreate(user) { return helper.validator(user, userSchema) }

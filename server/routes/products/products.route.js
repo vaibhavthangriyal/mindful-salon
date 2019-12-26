@@ -38,6 +38,7 @@ router.get("/all", authorizePrivilege("GET_ALL_PRODUCTS"), (req, res) => {
             else
                 res.json({ status: 200, data: docs, errors: true, message: "No products found" });
         }).catch(err => {
+            console.log(err)
             return res.status(500).json({ status: 500, data: null, errors: true, message: "Error while getting products" })
         })
 })

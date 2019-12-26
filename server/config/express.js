@@ -16,7 +16,7 @@ const passport = require('./passport');
 const validateEnv = require("../middleware/validateEnv");
 
 const app = express();
-
+require('../models/user/vendor.model');
 if (config.env === 'development') {
   app.use(logger('dev'));
 }

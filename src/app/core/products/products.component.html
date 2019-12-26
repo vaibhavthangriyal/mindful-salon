@@ -43,8 +43,8 @@
               <a style="cursor:pointer" data-toggle="tooltip" data-placement="top" title="Add Stock"><i
                   class="fas fas fa-plus" data-toggle="modal" data-target="#stockModal"
                   (click)="editProduct(i)"></i></a></td> -->
-            <td *ngIf="product.created_by.full_name">{{product?.created_by?.full_name | titlecase}}</td>
-            <td *ngIf="!product.created_by.full_name">--</td>
+            <td *ngIf="product.created_by">{{product?.created_by?.full_name | titlecase}}</td>
+            <td *ngIf="!product.created_by">--</td>
             <td>{{product.is_active ? 'Active': 'Inactive'}}</td>
             <td>
               <!-- <a style="cursor: pointer" data-toggle="tooltip" data-placement="top" title="View Product"
@@ -135,13 +135,13 @@
                 <div *ngIf="f.type.errors.required">Type is required</div>
               </div>
             </div>
-            <div class="form-group col-md-4">
-              <label for="inputEmail4">Service Type</label>
-              <select class="form-control" required formControlName="service_type" (change)="selectedServiceType($event)">
-                <option selected disabled>Select Type</option>
-                <option value="product">Product</option>
-                <option value="service">Service</option>
-              </select>
+            <div class="form-group ml-auto col-md-3">
+              <label for="inputEmail4">is Service</label>
+              <p-inputSwitch class="form-control" formControlName="is_service" required
+                [ngClass]="{ 'is-invalid': submitted && f.is_service.errors }"></p-inputSwitch>
+              <div *ngIf="submitted && f.is_service.errors" class="invalid-feedback">
+                <div *ngIf="f.is_service.errors.required">Is Service is required</div>
+              </div>
             </div>
           </div>
           <div class="form-row" *ngIf="(allSubCategories.length > 0)">

@@ -158,7 +158,7 @@ export class ProductsComponent implements OnInit {
       base_price: ['', [Validators.required, Validators.pattern('^[0-9]*$'), Validators.minLength(1)]],
       image: [''],
       type: [''],
-      service_type: ['']
+      is_service: [false]
     });
   }
 
@@ -242,6 +242,7 @@ export class ProductsComponent implements OnInit {
         this.toastr.error('Error While Fetcing Products', 'Refresh and Retry');
       } else {
         this.allproducts = res.data;
+        console.log(this.allproducts)
         this.dtTrigger.next();
         if (res.data) {
           for (var i = 0; i < res.data.length; i++) {
@@ -600,6 +601,7 @@ export class ProductsComponent implements OnInit {
     this.productForm.controls['name'].setValue(product.name);
     this.productForm.controls['base_price'].setValue(product.base_price);
     this.productForm.controls['type'].setValue(product.type._id);
+    this.productForm.controls['is_service'].setValue(product.is_service);
     if (product.image) {
       this.editShowImage = true;
       this.mastImage = product.image;

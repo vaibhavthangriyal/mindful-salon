@@ -14,6 +14,10 @@ module.exports = (p = false) => ({
     ADD_NEW_PRODUCT: p,
     DELETE_PRODUCT: p,
     UPDATE_PRODUCT: p,
+    GET_ALL_PRODUCT_TYPE: p,
+    ADD_NEW_PRODUCT_TYPE: p,
+    UPDATE_PRODUCT_TYPE: p,
+    DELETE_PRODUCT_TYPE: p,
     //Order Operations Privilege
     GET_ALL_ORDERS: p,
     GET_ALL_ORDERS_OWN: p,
