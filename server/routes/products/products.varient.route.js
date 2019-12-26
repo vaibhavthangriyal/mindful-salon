@@ -35,7 +35,7 @@ router.get("/", authorizePrivilege("GET_ALL_PRODUCT_VARIENTS"), (req, res) => {
     //     .then(docs => {
     ProductVarient
         .find({})
-        .populate("product attributes.attribute attributes.option")
+        .populate({path:"product attributes.attribute attributes.option",populate:{path:"created_by",select:"-password"}})
         .then(docs => {
             if (docs.length > 0)
                 res.json({ status: 200, data: docs, errors: false, message: "ALL PRODUCT VARIENTS " });
