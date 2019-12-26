@@ -33,12 +33,15 @@ router.get("/", authorizePrivilege("GET_ALL_PRODUCT_VARIENTS"), (req, res) => {
     //     { $group: { _id: "$product", varients: { $push: "$attributes" } } }
     // ]).exec()
     //     .then(docs => {
-    ProductVarient.find({}).populate("product attributes.attribute attributes.option").then(docs => {
-        if (docs.length > 0)
-            res.json({ status: 200, data: docs, errors: false, message: "ALL PRODUCT VARIENTS " });
-        else
-            res.json({ status: 200, data: docs, errors: true, message: "NO PRODUCT VARIENTS FOUND" });
-    })
+    ProductVarient
+        .find({})
+        .populate("product attributes.attribute attributes.option")
+        .then(docs => {
+            if (docs.length > 0)
+                res.json({ status: 200, data: docs, errors: false, message: "ALL PRODUCT VARIENTS " });
+            else
+                res.json({ status: 200, data: docs, errors: true, message: "NO PRODUCT VARIENTS FOUND" });
+        })
     // }).catch(err => {
     //     res.status(500).json({ status: 500, data: null, errors: true, message: "ERROR WHILE FETCHING PRODUCT VARIENTS" });
     // })
@@ -66,7 +69,7 @@ router.get("/bycategory/:id", authorizePrivilege("GET_ALL_PRODUCT_VARIENTS"), (r
             { $replaceRoot: { newRoot: "$products" } }
         ]).exec()
             .then(docs => {
-                ProductVarient.populate(docs, { path: "product attributes.attribute attributes.option", populate: { path: "category" } }).then(docs => {
+                ProductVarient.populate(docs, [{ path: "attributes.attribute attributes.option" }, { path: "product", populate: { path: "brand category", select: "name" } }]).then(docs => {
                     if (docs.length > 0)
                         res.json({ status: 200, data: docs, errors: false, message: "ALL PRODUCT VARIENTS " });
                     else
@@ -233,7 +236,7 @@ router.put("/images/:id", authorizePrivilege("UPDATE_PRODUCT_VARIENTS"), upload.
             })
             Promise.all(arr).then(data => {
                 ProductVarient
-                    .findByIdAndUpdate(req.params.id, { $set: { images: data } }, { new: true }, (err, doc) => {
+                    .findByIdAndUpdate(req.params.id, { $push: { images: { $each: data } } }, { new: true }, (err, doc) => {
                         if (err)
                             return res.status(500).json({ status: 500, data: null, errors: true, message: "Error while updating ProductVARIENTS" });
                         else {
