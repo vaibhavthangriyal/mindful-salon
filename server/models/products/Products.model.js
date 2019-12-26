@@ -11,7 +11,7 @@ const ProductSchema = new Schema({
     details: { type: String, default: "", lowercase: true, trim: true },
     is_active: { type: Boolean, default: true, required: true },
     is_available: { type: Boolean, default: false, required: false },
-    service_type: { type: String, default: false, required: false },
+    service_type: { type: Boolean, default: false, required: false },
     image: { type: String },
     name: { type: String, required: true, lowercase: true, trim: true },
     product_id: { type: String, required: true, unique: true, lowercase: true, trim: true },
