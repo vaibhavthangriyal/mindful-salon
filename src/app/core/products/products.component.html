@@ -8,7 +8,8 @@
         data-target="#modal2">Upload CSV</a>
     </div>
     <div class="card-body">
-      <table class="table table table-hover table-stripped" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" id="mainTable">
+      <table class="table table table-hover table-stripped" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+        id="mainTable">
         <thead>
           <tr>
             <th scope="col">Image</th>
@@ -107,7 +108,8 @@
               <select class="form-control" required [(ngModel)]="subCategory1" [ngModelOptions]="{standalone: true}"
                 (change)="getAllSubCategory1()">
                 <option selected disabled>Select Category</option>
-                <option [ngValue]="category._id" *ngFor="let category of allCategories;let i=index">{{category.name  | titlecase}}
+                <option [ngValue]="category._id" *ngFor="let category of allCategories;let i=index">
+                  {{category.name  | titlecase}}
                 </option>
               </select>
               <div *ngIf="submitted && f.category.errors" class="invalid-feedback">
@@ -527,8 +529,34 @@
         </button>
       </div>
       <div class="modal-body">
-        <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
-        <input type="file" name="" id="" (change)="onSelectFile($event)" multiple>
+        <div class="row">
+          <div class="col">
+            <img src="https://www.cureuppharma.in/wp-content/uploads/2018/06/dummy.jpg" class="img-fluid" alt="">
+            <div class="row">
+              <input type="file" name="" id="">
+            </div>
+          </div>
+          <div class="divider-text divider-vertical" data-text="and"></div>
+          <div class="col">
+            <img src="https://www.cureuppharma.in/wp-content/uploads/2018/06/dummy.jpg" class="img-fluid" alt="">
+            <div class="row">
+              <input type="file" name="" id="">
+            </div>
+          </div>
+          <div class="divider-text divider-vertical" data-text="and"></div>
+          <div class="col">
+            <img src="https://www.cureuppharma.in/wp-content/uploads/2018/06/dummy.jpg" class="img-fluid" alt="">
+          </div>
+          <div class="divider-text divider-vertical" data-text="and"></div>
+
+        </div>
+        <!-- <div class="" *ngIf="(galleryImages.length > 0)">
+          <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
+        </div>
+        <div class="jumbotron text-center" *ngIf="!(galleryImages.length > 0)">
+          NO IMAGES FOUND!! ADD NEW IMAGES
+        </div>
+        <input type="file" name="" id="" (change)="onSelectFile($event)" multiple> -->
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>

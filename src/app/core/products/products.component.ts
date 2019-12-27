@@ -208,12 +208,13 @@ export class ProductsComponent implements OnInit {
     const imageArray: any[] = [];
     for (let index = 0; index < photos.length; index++) {
       const imageObject: { small: String, medium: String, big: String } = { small: '', medium: '', big: '' };
-      imageObject.small = 'https://sgsmarketing.s3.ap-south-1.amazonaws.com/' + photos[index];
-      imageObject.medium = 'https://sgsmarketing.s3.ap-south-1.amazonaws.com/' + photos[index];
-      imageObject.big = 'https://sgsmarketing.s3.ap-south-1.amazonaws.com/' + photos[index];
+      imageObject.small = 'https://mindful-salon.s3.ap-south-1.amazonaws.com/' + photos[index];
+      imageObject.medium = 'https://mindful-salon.s3.ap-south-1.amazonaws.com/' + photos[index];
+      imageObject.big = 'https://mindful-salon.s3.ap-south-1.amazonaws.com/' + photos[index];
       imageArray.push(imageObject);
     }
     this.galleryImages = imageArray;
+    console.log(this.galleryImages);
     // if (this.galleryImages.length > 0) {
     //   this.imagesPresent = true;
     // } else {

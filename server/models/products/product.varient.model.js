@@ -12,7 +12,10 @@ const productType = new Schema({
     product: { type: mongoose.Schema.Types.ObjectId, ref: 'product' },
     attributes: [att],
     name: { type: String },
-    images: [String],
+    image: {
+        primary:String,
+        secondary:String
+    },
     // sku_id: { type: String },
     price: { type: Number },
     stock: { type: Number }
