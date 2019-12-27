@@ -8,17 +8,15 @@
         data-target="#modal2">Upload CSV</a>
     </div>
     <div class="card-body">
-      <table class="table table table-hover" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" id="typeTable">
+      <table class="table table table-hover table-stripped" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" id="mainTable">
         <thead>
           <tr>
-            <!-- <th scope="col">S No.</th> -->
             <th scope="col">Image</th>
             <th scope="col">Name</th>
             <th scope="col">Category</th>
             <th scope="col">Type</th>
             <th scope="col">Brand</th>
-            <!-- <th scope="col">Selling Price</th> -->
-            <!-- <th scope="col">Stock</th> -->
+            <th scope="col">Service Type</th>
             <th scope="col">Created by</th>
             <th scope="col">Status</th>
             <th scope="col">Actions</th>
@@ -26,7 +24,6 @@
         </thead>
         <tbody>
           <tr *ngFor="let product of allproducts; let i = index">
-            <!-- <td>{{i+1}}</td> -->
             <td *ngIf="product.image"><img src="{{productImagesArray[i]}}" alt="" width="25px" class="img-thumbnail">
             </td>
             <td *ngIf="!product.image"></td>
@@ -36,13 +33,7 @@
             <td *ngIf="product.type">{{product?.type?.name | titlecase}}</td>
             <td *ngIf="!product.type">-</td>
             <td>{{product?.brand?.name | titlecase}}</td>
-            <!-- <td *ngIf="product.selling_price">{{product?.selling_price | number}}</td>
-            <td *ngIf="!product.selling_price">{{product?.selling_price | number}}</td> -->
-            <!-- <td *ngIf="product.base_price">{{product?.base_price | number}}</td> -->
-            <!-- <td>{{product?.stock | number}}
-              <a style="cursor:pointer" data-toggle="tooltip" data-placement="top" title="Add Stock"><i
-                  class="fas fas fa-plus" data-toggle="modal" data-target="#stockModal"
-                  (click)="editProduct(i)"></i></a></td> -->
+            <td>{{product.is_service ? 'Service' : 'Product'}}</td>
             <td *ngIf="product.created_by">{{product?.created_by?.full_name | titlecase}}</td>
             <td *ngIf="!product.created_by">--</td>
             <td>{{product.is_active ? 'Active': 'Inactive'}}</td>
@@ -94,7 +85,7 @@
               <select class="form-control" formControlName="brand" required
                 [ngClass]="{ 'is-invalid': submitted && f.brand.errors }" name="brand">
                 <option selected disabled>Select Brand</option>
-                <option [ngValue]="brand._id" *ngFor="let brand of allBrand;let i=index">{{brand.name}}
+                <option [ngValue]="brand._id" *ngFor="let brand of allBrand;let i=index">{{brand.name | titlecase}}
                 </option>
               </select>
               <div *ngIf="submitted && f.brand.errors" class="invalid-feedback">
@@ -116,7 +107,7 @@
               <select class="form-control" required [(ngModel)]="subCategory1" [ngModelOptions]="{standalone: true}"
                 (change)="getAllSubCategory1()">
                 <option selected disabled>Select Category</option>
-                <option [ngValue]="category._id" *ngFor="let category of allCategories;let i=index">{{category.name}}
+                <option [ngValue]="category._id" *ngFor="let category of allCategories;let i=index">{{category.name  | titlecase}}
                 </option>
               </select>
               <div *ngIf="submitted && f.category.errors" class="invalid-feedback">
@@ -137,11 +128,7 @@
             </div>
             <div class="form-group ml-auto col-md-3">
               <label for="inputEmail4">is Service</label>
-              <p-inputSwitch class="form-control" formControlName="is_service" required
-                [ngClass]="{ 'is-invalid': submitted && f.is_service.errors }"></p-inputSwitch>
-              <div *ngIf="submitted && f.is_service.errors" class="invalid-feedback">
-                <div *ngIf="f.is_service.errors.required">Is Service is required</div>
-              </div>
+              <p-inputSwitch class="form-control" formControlName="is_service"></p-inputSwitch>
             </div>
           </div>
           <div class="form-row" *ngIf="(allSubCategories.length > 0)">
@@ -212,17 +199,6 @@
                 </div>
               </div>
             </div>
-            <div class="form-group col-md-3" *ngIf="showSellingPrice">
-              <label for="inputEmail4">Base Price</label>
-              <input type="number" class="form-control" placeholder="Selling Price here" formControlName="base_price"
-                required [ngClass]="{ 'is-invalid': submitted && f.base_price.errors }">
-              <div *ngIf="submitted && f.base_price.errors" class="invalid-feedback">
-                <div *ngIf="f.base_price.errors.required">Base Price is required</div>
-              </div>
-              <div class="invalid-feedback" *ngIf="f.base_price.errors && (f.base_price.dirty || f.base_price.touched)">
-                <p *ngIf="f.base_price.errors.pattern" class="text-danger">Number Only</p>
-              </div>
-            </div>
             <div class="form-group col-md-3">
               <label for="">Upload Image</label>
               <div class="custom-file">
@@ -233,11 +209,7 @@
             </div>
             <div class="form-group ml-auto col-md-3">
               <label for="">Status</label>
-              <p-inputSwitch class="form-control" formControlName="is_active" required
-                [ngClass]="{ 'is-invalid': submitted && f.is_active.errors }"></p-inputSwitch>
-              <div *ngIf="submitted && f.is_active.errors" class="invalid-feedback">
-                <div *ngIf="f.is_active.errors.required">Status is required</div>
-              </div>
+              <p-inputSwitch class="form-control" formControlName="is_active"></p-inputSwitch>
             </div>
           </div>
           <br>
@@ -245,10 +217,6 @@
             <button type="submit" class="btn btn-primary mx-1">Save</button>
             <button type="button" class="btn btn-primary " data-dismiss="modal">Close</button>
           </div>
-          <!-- <div class="text-center">
-            <button type="submit" class="btn btn-primary tx-13 mx-1">Save</button>
-            <button type="button" class="btn btn-primary tx-13" data-dismiss="modal">Close</button>
-          </div> -->
         </form>
       </div>
     </div>
@@ -417,7 +385,7 @@
       <div class="modal-body">
         <h5 class="text-center">Add Stock Into Product</h5>
         <div class="row">
-          <div class="col">Current Stock: {{currentproduct?.stock}}</div>
+          <div class="col">Current Stock: {{currentproduct?.stock | number}}</div>
         </div>
         <input type="number" class="form-control" [(ngModel)]="newStock" [pattern]="pattern">
       </div>
@@ -471,8 +439,8 @@
               <td scope="row">{{currentproduct?.name | titlecase}} <span
                   *ngFor="let attribute of varient?.attributes ; let index = index;">{{attribute?.option?.value | titlecase}}
                 </span></td>
-              <td scope="row">{{varient?.price}}</td>
-              <td scope="row">{{varient?.stock}}</td>
+              <td scope="row">{{varient?.price | number}}</td>
+              <td scope="row">{{varient?.stock | number}}</td>
               <ng-container *ngFor="let attribute of varient?.attributes ; let index = index;">
                 <td scope="row" *ngIf="attribute?.option?.value">{{attribute?.option?.value}}</td>
                 <td scope="row" *ngIf="!(attribute?.option?.value)">-</td>

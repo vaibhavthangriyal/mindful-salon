@@ -9,30 +9,9 @@ const mongodb = require('mongoose').Types;
 const { upload, S3Upload } = require("../../utils/image-upload");
 const authorizePrivilege = require("../../middleware/authorizationMiddleware");
 //  *************** GET APIS *********************** //
-// GET ALL PRODUCT VARIENTS
-// router.get("/all", authorizePrivilege("GET_ALL_PRODUCT_VARIENTS"), (req, res) => {
-//     ProductVarient
-//         .find()
-//         // .populate('attributes.value product')
-//         .exec()
-//         .then(docs => {
-//             if (docs.length > 0)
-//                 res.json({ status: 200, data: docs, errors: false, message: "All PRODUCT VARIENTS" });
-//             else
-//                 res.json({ status: 200, data: docs, errors: false, message: "NO PRODUCT VARIENTS FOUND" });
-//         }).catch(err => {
-//             console.log(err);
-//             res.status(500).json({ status: 500, data: null, errors: true, message: "ERROR WHILE GETTING PRODUCT VARIENTS" })
-//         })
-// })
 
 // GET SPECIFIC PRODUCT VARIENTS 
 router.get("/", authorizePrivilege("GET_ALL_PRODUCT_VARIENTS"), (req, res) => {
-    // if (mongodb.ObjectId.isValid(req.params.id)) {
-    // ProductVarient.aggregate([
-    //     { $group: { _id: "$product", varients: { $push: "$attributes" } } }
-    // ]).exec()
-    //     .then(docs => {
     ProductVarient
         .find({})
         .populate({ path: "product attributes.attribute attributes.option", populate: { path: "created_by", select: "-password" } })
@@ -40,7 +19,7 @@ router.get("/", authorizePrivilege("GET_ALL_PRODUCT_VARIENTS"), (req, res) => {
             if (docs.length > 0)
                 res.json({ status: 200, data: docs, errors: false, message: "ALL PRODUCT VARIENTS " });
             else
-                res.json({ status: 200, data: docs, errors: true, message: "NO PRODUCT VARIENTS FOUND" });
+                res.json({ status: 200, data: docs, errors: false, message: "NO PRODUCT VARIENTS FOUND" });
         })
     // }).catch(err => {
     //     res.status(500).json({ status: 500, data: null, errors: true, message: "ERROR WHILE FETCHING PRODUCT VARIENTS" });
@@ -73,7 +52,7 @@ router.get("/bycategory/:id", authorizePrivilege("GET_ALL_PRODUCT_VARIENTS"), (r
                     if (docs.length > 0)
                         res.json({ status: 200, data: docs, errors: false, message: "ALL PRODUCT VARIENTS " });
                     else
-                        res.json({ status: 200, data: docs, errors: true, message: "NO PRODUCT VARIENTS FOUND" });
+                        res.json({ status: 200, data: docs, errors: false, message: "NO PRODUCT VARIENTS FOUND" });
                 })
             }).catch(err => {
                 console.log(err);
@@ -101,7 +80,7 @@ router.get('/bybrand/:id', authorizePrivilege("GET_ALL_PRODUCT_VARIENTS"), async
             if (docs.length > 0)
                 res.json({ status: 200, data: docs, errors: false, message: "ALL PRODUCT VARIENTS " });
             else
-                res.json({ status: 200, data: docs, errors: true, message: "NO PRODUCT VARIENTS FOUND" });
+                res.json({ status: 200, data: docs, errors: false, message: "NO PRODUCT VARIENTS FOUND" });
         })
         //.find({ isAvailable: true }).exec();
         // console.log(allDrivers);
@@ -122,7 +101,7 @@ router.get("/VARIENTS/:id", authorizePrivilege("GET_ALL_PRODUCT_VARIENTS"), (req
                 if (docs.length > 0)
                     res.json({ status: 200, data: docs, errors: false, message: "ALL PRODUCT VARIENTS " });
                 else
-                    res.json({ status: 200, data: docs, errors: true, message: "NO PRODUCT VARIENTS FOUND" });
+                    res.json({ status: 200, data: docs, errors: false, message: "NO PRODUCT VARIENTS FOUND" });
             }).catch(err => {
                 res.status(500).json({ status: 500, data: null, errors: true, message: "ERROR WHILE FETCHING PRODUCT VARIENTS" });
             })

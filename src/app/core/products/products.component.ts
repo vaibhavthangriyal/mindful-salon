@@ -155,7 +155,6 @@ export class ProductsComponent implements OnInit {
       details: [''],
       is_active: [false],
       name: ['', Validators.required],
-      base_price: ['', [Validators.required, Validators.pattern('^[0-9]*$'), Validators.minLength(1)]],
       image: [''],
       type: [''],
       is_service: [false]
@@ -221,6 +220,12 @@ export class ProductsComponent implements OnInit {
     //   this.imagesPresent = false;
     // }
   }
+
+  reRenderDatatable() {
+    jQuery('#mainTable').DataTable().destroy();
+    this.dtTrigger.next();
+  }
+
   // ************************** GET FUNCTIONS *********************
   get f() { return this.productForm.controls; }
   // get getOptionsForm() { return this.productVarient'controls' as FormArray; }
@@ -242,7 +247,7 @@ export class ProductsComponent implements OnInit {
         this.toastr.error('Error While Fetcing Products', 'Refresh and Retry');
       } else {
         this.allproducts = res.data;
-        console.log(this.allproducts)
+        console.log(this.allproducts);
         this.dtTrigger.next();
         if (res.data) {
           for (var i = 0; i < res.data.length; i++) {
@@ -390,9 +395,10 @@ export class ProductsComponent implements OnInit {
         jQuery('#modal3').modal('hide');
         this.toastr.success('Product Added!', 'Success!');
         this.allproducts.push(res.data);
-        this.resetForm();
+        this.reRenderDatatable();
       }
     });
+    this.resetForm();
   }
 
   // ************************** UPDATE FUNCTIONS *****************************
@@ -401,12 +407,13 @@ export class ProductsComponent implements OnInit {
     this.productService.updateProduct(product, id).subscribe((res: ResponseModel) => {
       jQuery('#modal3').modal('hide');
       this.toastr.info('Product Updated Successfully!', 'Updated!!');
-      this.resetForm();
       this.allproducts.splice(this.currentIndex, 1, res.data);
       this.currentproductId = null;
       this.editing = false;
       this.masterArray.length = 0;
+      this.reRenderDatatable();
     });
+    this.resetForm();
   }
 
   updateProductStock() {
@@ -427,6 +434,7 @@ export class ProductsComponent implements OnInit {
       this.productService.deleteProduct(this.allproducts[i]._id).toPromise().then(() => {
         this.toastr.warning('Products Deleted!', 'Deleted!');
         this.allproducts.splice(i, 1);
+        this.reRenderDatatable();
       }).catch((err) => console.log(err));
     }
   }
@@ -450,8 +458,6 @@ export class ProductsComponent implements OnInit {
     if (!this.productForm.get('image').value) {
       this.productForm.removeControl('image');
     }
-    if (!(this.showSellingPrice)) { this.productForm.removeControl('base_price') }
-    else { this.productForm.addControl('base_price', new FormControl('')) }
     console.log(this.productForm.value);
     if (this.productForm.invalid) {
       return;
@@ -599,7 +605,6 @@ export class ProductsComponent implements OnInit {
     this.productForm.controls['details'].setValue(product.details);
     this.productForm.controls['is_active'].setValue(product.is_active);
     this.productForm.controls['name'].setValue(product.name);
-    this.productForm.controls['base_price'].setValue(product.base_price);
     this.productForm.controls['type'].setValue(product.type._id);
     this.productForm.controls['is_service'].setValue(product.is_service);
     if (product.image) {

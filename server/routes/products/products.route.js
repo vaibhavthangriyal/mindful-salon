@@ -17,7 +17,7 @@ router.get("/", authorizePrivilege("GET_ALL_PRODUCTS_OWN"), (req, res) => {
             if (docs.length > 0)
                 return res.json({ status: 200, data: docs, errors: false, message: "All products" });
             else
-                return res.json({ status: 200, data: docs, errors: true, message: "No products found" });
+                return res.json({ status: 200, data: docs, errors: false, message: "No products found" });
         }).catch(err => {
             console.log(err);
             return res.status(500).json({ status: 500, data: null, errors: true, message: "Error while getting products" })
@@ -36,7 +36,7 @@ router.get("/all", authorizePrivilege("GET_ALL_PRODUCTS"), (req, res) => {
             if (docs.length > 0)
                 return res.json({ status: 200, data: docs, errors: false, message: "All products" });
             else
-                res.json({ status: 200, data: docs, errors: true, message: "No products found" });
+                res.json({ status: 200, data: docs, errors: false, message: "No products found" });
         }).catch(err => {
             console.log(err)
             return res.status(500).json({ status: 500, data: null, errors: true, message: "Error while getting products" })
@@ -54,7 +54,7 @@ router.get("/bycategory/:id", authorizePrivilege("GET_ALL_PRODUCTS"), (req, res)
                 if (docs.length > 0)
                     return res.json({ status: 200, data: docs, errors: false, message: "All products" });
                 else
-                    res.json({ status: 200, data: docs, errors: true, message: "No products found" });
+                    res.json({ status: 200, data: docs, errors: false, message: "No products found" });
             }).catch(err => {
                 return res.status(500).json({ status: 500, data: null, errors: true, message: "Error while getting products" });
             })
@@ -75,7 +75,7 @@ router.get("/bybrand/:id", authorizePrivilege("GET_ALL_PRODUCTS"), (req, res) =>
                 if (docs.length > 0)
                     return res.json({ status: 200, data: docs, errors: false, message: "All products" });
                 else
-                    res.json({ status: 200, data: docs, errors: true, message: "No products found" });
+                    res.json({ status: 200, data: docs, errors: false, message: "No products found" });
             }).catch(err => {
                 return res.status(500).json({ status: 500, data: null, errors: true, message: "Error while getting products" });
             })
@@ -93,7 +93,7 @@ router.get("/customer", authorizePrivilege("GET_ALL_CUSTOMER_PRODUCTS"), (req, r
         if (docs.length > 0)
             res.json({ status: 200, data: docs, errors: false, message: "All products" });
         else
-            res.json({ status: 200, data: docs, errors: true, message: "No products found" });
+            res.json({ status: 200, data: docs, errors: false, message: "No products found" });
     }).catch(err => {
         return res.status(500).json({ status: 500, data: null, errors: true, message: "Error while getting products" });
     })
