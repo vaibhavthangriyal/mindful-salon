@@ -8,7 +8,7 @@ import { AuthService } from '../../auth/auth.service';
 import { ResponseModel } from '../../shared/shared.model';
 import * as _ from 'lodash';
 import value from '*.json';
-import { Title } from '@angular/platform-browser';
+import { Title, DomSanitizer } from '@angular/platform-browser';
 import { ProductTypeService } from './types/shared/product.types.service';
 import { ProductTypeModel } from './types/shared/product.types.model';
 import { AttributesService } from './attributes/shared/attributes.service';
@@ -16,6 +16,7 @@ import { ProductOptionService } from './options/shared/product.types.service';
 import { ProductVarientService } from './shared/product.varient.service';
 import { validateBasis } from '@angular/flex-layout';
 import { NgxGalleryImage, NgxGalleryAnimation, NgxGalleryOptions } from 'ngx-gallery';
+import { element } from '@angular/core/src/render3/instructions';
 
 @Component({
   selector: 'app-products',
@@ -41,6 +42,8 @@ export class ProductsComponent implements OnInit {
   currentproduct: any;
   currentproductId: String;
   currentIndex: number;
+  currentVarientPrimaryImageURL: string = 'http://www.internetgardener.com.au/wp-content/uploads/2016/02/dummy-product.jpg';
+  currentVarientSecondaryyImageURL: string = 'http://www.internetgardener.com.au/wp-content/uploads/2016/02/dummy-product.jpg';
   dtOptions: any = {};
   dtTrigger: Subject<any> = new Subject();
   editing: Boolean = false;
@@ -58,7 +61,6 @@ export class ProductsComponent implements OnInit {
   image: any;
   imageFormData: FormData = new FormData();
   editShowImage: Boolean = false;
-  varientUpdate: Boolean = false;
   editImage: any;
   newStock: Number;
   mastImage: any;
@@ -66,7 +68,8 @@ export class ProductsComponent implements OnInit {
   optionArray: FormArray;
   pattern = '^[0-9]*$';
   productAttributeArray: any[] = [];
-  productFormData: FormData;
+  productFormData: FormData = new FormData();
+  varientFormData: FormData;
   productImagesArray: any[] = [];
   productOptionsArray: any[] = [];
   productType: ProductTypeModel;
@@ -75,6 +78,8 @@ export class ProductsComponent implements OnInit {
   submitted: Boolean = false;
   uploading: Boolean = false;
   varientArray: any[] = [];
+  varientIndex: number;
+  varientUpdate: Boolean = false;
   allSubCategories: any[] = [];
   allSubCategories2: any[] = [];
   allSubCategories3: any[] = [];
@@ -86,6 +91,7 @@ export class ProductsComponent implements OnInit {
   subCategory4: any;
   allCategoryArray: any[] = [];
   showSellingPrice: Boolean = false;
+  uploadingImages: Boolean = false;
   constructor(
     private productService: ProductsService,
     private formBuilder: FormBuilder,
@@ -95,9 +101,10 @@ export class ProductsComponent implements OnInit {
     private typeService: ProductTypeService,
     private productAttributeService: AttributesService,
     private productOptionService: ProductOptionService,
-    private productVarientService: ProductVarientService
+    private productVarientService: ProductVarientService,
+    private sanitizer: DomSanitizer
   ) {
-    this.titleService.setTitle('Product Management');
+    this.titleService.setTitle('Mindful Salon | Product Management');
     this.initForm();
   }
 
@@ -178,7 +185,6 @@ export class ProductsComponent implements OnInit {
       stock: ['', Validators.required]
     });
   }
-
 
   initGallery(photos) {
     this.galleryOptions = [
@@ -393,13 +399,13 @@ export class ProductsComponent implements OnInit {
       if (res.errors) {
         this.toastr.error('Error While Adding !', 'Error!');
       } else {
-        jQuery('#modal3').modal('hide');
-        this.toastr.success('Product Added!', 'Success!');
         this.allproducts.push(res.data);
         this.reRenderDatatable();
+        this.toastr.success('Product Added!', 'Success!');
+        jQuery('#modal3').modal('hide');
+        this.resetForm();
       }
     });
-    this.resetForm();
   }
 
   // ************************** UPDATE FUNCTIONS *****************************
@@ -459,40 +465,17 @@ export class ProductsComponent implements OnInit {
     if (!this.productForm.get('image').value) {
       this.productForm.removeControl('image');
     }
-    console.log(this.productForm.value);
+    Object.keys(this.productForm.controls).forEach(control => {
+      this.productFormData.append(control, this.productForm.get(control).value);
+    });
     if (this.productForm.invalid) {
+      this.toastr.error('Invalid Form', 'Error');
       return;
     } else {
-
-    }
-    if (this.fileSelected) {
-      this.productService.getUrlProduct().subscribe((res: ResponseModel) => {
-        this.keyProductImage = res.data.key;
-        this.urlProductImage = res.data.url;
-        if (this.urlProductImage) {
-          this.productService.sendUrlProduct(this.urlProductImage, this.fileSelected)
-            .then(resp => {
-              if (resp.status === 200) {
-                this.productForm.value.image = this.keyProductImage;
-                if (this.editing) {
-                  this.updateProduct(this.productForm.value);
-                } else {
-                  this.addProduct(this.productForm.value);
-                }
-              }
-            });
-        }
-      });
-    } else {
       if (this.editing) {
-        if (!this.fileSelected) {
-          this.productForm.value.image = this.mastImage;
-        }
-        this.updateProduct(this.productForm.value);
-
+        this.updateProduct(this.productFormData);
       } else {
-        delete this.productForm.value.image;
-        this.addProduct(this.productForm.value);
+        this.addProduct(this.productFormData);
       }
     }
   }
@@ -504,15 +487,6 @@ export class ProductsComponent implements OnInit {
       for (let index = 0; index < attribute.length; index++) {
         this.productVarient.value.attributes[index].attribute = this.productAttributeArray[index]._id;
       }
-      // this.productFormData = new FormData();
-      // this.productFormData.append('product',  this.currentproduct._id);
-      // this.productFormData.append('attributes', this.productVarient.get('attributes').value);
-      // this.productFormData.append('description', this.productVarient.get('description').value);
-      // this.productFormData.append('price', this.productVarient.get('price').value);
-      // this.productFormData.append('stock', this.productVarient.get('stock').value);
-      // if (this.productVarient.get('images').value) {
-      //   this.productFormData.append('images', this.productVarient.get('images').value);
-      // }
       this.productVarientService.addNewProductVarients(this.productVarient.value).subscribe((res: ResponseModel) => {
         if (res.errors) {
           this.toastr.error('Error While Adding Varient', 'Refresh And Retry');
@@ -527,14 +501,14 @@ export class ProductsComponent implements OnInit {
       for (let i = 0; i < this.currentVarient.attributes.length; i++) {
         this.productVarient.value.attributes[i].attribute = this.currentVarient.attributes[i].attribute._id;
       }
-      this.productFormData = new FormData();
-      this.productFormData.append('product', this.productVarient.get('product').value);
-      this.productFormData.append('attributes', this.productVarient.get('attributes').value);
-      this.productFormData.append('description', this.productVarient.get('description').value);
-      this.productFormData.append('price', this.productVarient.get('price').value);
-      this.productFormData.append('stock', this.productVarient.get('stock').value);
-      this.productFormData.append('images', this.productVarient.get('images').value);
-      this.productVarientService.updateProductVarients(this.currentVarient._id, this.productFormData)
+      this.varientFormData = new FormData();
+      this.varientFormData.append('product', this.productVarient.get('product').value);
+      this.varientFormData.append('attributes', this.productVarient.get('attributes').value);
+      this.varientFormData.append('description', this.productVarient.get('description').value);
+      this.varientFormData.append('price', this.productVarient.get('price').value);
+      this.varientFormData.append('stock', this.productVarient.get('stock').value);
+      this.varientFormData.append('images', this.productVarient.get('images').value);
+      this.productVarientService.updateProductVarients(this.currentVarient._id, this.varientFormData)
         .subscribe((res: ResponseModel) => {
           if (res.errors) {
             this.toastr.error('Error While Deleting Varient');
@@ -558,6 +532,9 @@ export class ProductsComponent implements OnInit {
     this.selectallcheckboxes.forEach((element) => {
       element.nativeElement.checked = false;
     });
+    this.productFormData = new FormData();
+    this.currentVarient = undefined;
+    this.currentproduct = undefined;
   }
 
   resetProductVarientForm() {
@@ -570,7 +547,7 @@ export class ProductsComponent implements OnInit {
 
   // ************************** CALCULATION FUNCTIONS *****************************
 
-  selectFile(event: any) {
+  selectFile(event: any, type) {
     this.fileSelected = event.target.files[0];
   }
 
@@ -631,6 +608,8 @@ export class ProductsComponent implements OnInit {
   editVarient(index: number) {
     this.initProductVarientForm();
     this.currentVarient = this.varientArray[index];
+    this.varientIndex = index;
+    this.setVarientImages();
     this.initGallery(this.currentVarient.images);
     console.log(this.currentVarient);
     this.varientUpdate = true;
@@ -689,24 +668,76 @@ export class ProductsComponent implements OnInit {
     }
   }
 
-  onSelectFile(event) {
+  onSelectFile(event, type) {
+    console.log(type);
     if (event.target.files && event.target.files[0]) {
       const filesAmount = event.target.files.length;
       for (let i = 0; i < filesAmount; i++) {
-        this.imageFormData.append('images', event.target.files[i]);
+        this.imageFormData.append(type, event.target.files[i]);
+      }
+    }
+  }
+
+  onProductImageSelect(event, type) {
+    console.log(type);
+    if (event.target.files && event.target.files[0]) {
+      const filesAmount = event.target.files.length;
+      for (let i = 0; i < filesAmount; i++) {
+        this.productFormData.append(type, event.target.files[i]);
       }
     }
   }
 
   uploadImages() {
-    this.productService.uploadProductImages(this.currentVarient._id, this.imageFormData).subscribe((res: ResponseModel) => {
+    this.uploadingImages = true;
+    this.productService.uploadVarientImages(this.currentVarient._id, this.imageFormData).subscribe((res: ResponseModel) => {
       if (res.errors) {
         this.toastr.error('Error While Uploading Images', 'Try Again ');
+        this.uploadingImages = false;
+        this.imageFormData = new FormData();
       } else {
+        console.log(res.data);
+        this.varientArray.splice(this.varientIndex, 1, res.data);
+        this.setVarientImages();
         this.toastr.success('Images Uploaded Successfully');
+        this.uploadingImages = false;
         jQuery('#imageModal').modal('hide');
+        this.imageFormData = new FormData();
       }
     });
+  }
+
+  uploadProductImages() {
+    this.uploadingImages = true;
+    this.productService.uploadVarientImages(this.currentVarient._id, this.imageFormData).subscribe((res: ResponseModel) => {
+      if (res.errors) {
+        this.toastr.error('Error While Uploading Images', 'Try Again ');
+        this.uploadingImages = false;
+        this.imageFormData = new FormData();
+      } else {
+        console.log(res.data);
+        this.varientArray.splice(this.varientIndex, 1, res.data);
+        this.setVarientImages();
+        this.toastr.success('Images Uploaded Successfully');
+        this.uploadingImages = false;
+        jQuery('#imageModal').modal('hide');
+        this.imageFormData = new FormData();
+      }
+    });
+  }
+
+  setVarientImages() {
+    // if (this.currentVarient.images) {
+    //   if (this.currentVarient.images.primary) {
+    //     document.getElementById('imagePreviewPrimary').style.background =
+    //       'url(' + 'https://mindful-salon.s3.ap-south-1.amazonaws.com/' + this.currentVarient.images.primary + ') ';
+    //     // this.currentVarientPrimaryImageURL = this.currentVarient.images.primary;
+    //   }
+    //   if (this.currentVarient.images.secondary) {
+    //     document.getElementById('imagePreviewSecondary').style.background =
+    //       'url(' + 'https://mindful-salon.s3.ap-south-1.amazonaws.com/' + this.currentVarient.images.secondary + ') ';
+    //   }
+    // }
   }
 }
 

@@ -119,22 +119,21 @@ router.post('/add', authorizePrivilege("ADD_NEW_PRODUCT_VARIENTS"), upload.field
     if (!isEmpty(result.errors)) {
         return res.status(400).json({ status: 400, data: null, errors: result.errors, message: "FIELDS REQUIRED" });
     }
-
-    // let newProductVARIENTS = new ProductVarient(result.data);
-    // newProductVARIENTS
-    //     .save()
-    //     .then((_ProductVARIENTS) => {
-    //         _ProductVARIENTS.populate(
-    //             [{ path: "attributes.attribute", model: "product_attribute" },
-    //             { path: "attributes.option", model: "product_option" }])
-    //             .execPopulate()
-    //             .then(_data => {
-    //                 res.json({ status: 200, data: _data, errors: false, message: "NEW PRODUCT VARIENT ADDED SUCCESSFULLY " });
-    //             })
-    //     }).catch(err => {
-    //         console.log(err);
-    //         res.status(500).json({ status: 500, data: null, errors: true, message: "ERROR OCCURED WHILE ADDING PRODUCT VARIENT" });
-    //     })
+    let newProductVARIENTS = new ProductVarient(result.data);
+    newProductVARIENTS
+        .save()
+        .then((_ProductVARIENTS) => {
+            _ProductVARIENTS.populate(
+                [{ path: "attributes.attribute", model: "product_attribute" },
+                { path: "attributes.option", model: "product_option" }])
+                .execPopulate()
+                .then(_data => {
+                    res.json({ status: 200, data: _data, errors: false, message: "NEW PRODUCT VARIENT ADDED SUCCESSFULLY " });
+                })
+        }).catch(err => {
+            console.log(err);
+            res.status(500).json({ status: 500, data: null, errors: true, message: "ERROR OCCURED WHILE ADDING PRODUCT VARIENT" });
+        })
 });
 
 //UPDATE A PRODUCT
@@ -210,25 +209,30 @@ router.get("/byproduct/:id", authorizePrivilege("GET_ALL_PRODUCT_VARIENTS"), (re
 router.put("/images/:id", authorizePrivilege("UPDATE_PRODUCT_VARIENTS"), upload.fields([{ name: "primary", maxCount: 1 }, { name: "secondary", maxCount: 1 }]), async (req, res) => {
     if (mongodb.ObjectId.isValid(req.params.id)) {
         let keys = Object.keys(req.files);
+        let obj ={};
         if (keys.length) {
-            result.data["image.primary"] = (req.files["primary"] && req.files["primary"].length) ? (await S3Upload("products/" + result.data.product, req.files["primary"][0])) : null;
-            result.data["image.primary"] = (req.files["secondary"] && req.files["secondary"].length) ? (await S3Upload("products/" + result.data.product, req.files["secondary"][0])) : null;
+            obj["images.primary"] = (req.files["primary"] && req.files["primary"].length) ? (await S3Upload("varient/" + req.params.id, req.files["primary"][0])) : null;
+            obj["images.secondary"] = (req.files["secondary"] && req.files["secondary"].length) ? (await S3Upload("varient/" + req.params.id, req.files["secondary"][0])) : null;
         }
-        let obj = {};
-        for (let index = 0; index < allKeys.length; index++) {
-            let x = allKeys[index];
-            obj[`image.${x}`] = (await S3Upload("products/" + result.data.product, req.files[x][0]));
-        }
-        ProductVarient.findByIdAndUpdate(req.params.id,{ $set:obj },{new:true})
-        .populate("attributes.attribute attributes.option").exec()
-        .then(_data => {
-            return res.status(200).json({ status: 200, data: _data, errors: false, message: "ProductVARIENTS Updated Successfully" });
-        }).catch(err => {
-            console.log(err);
-            res.status(500).json({ status: 500, data: null, errors: true, message: "Error while updating varients" });
-        })
-    }else{
-        return res.status(400).json({status:400,data:null,errors:true,message:"Invalid id"});
+        // let obj = {};
+        // for (let index = 0; index < allKeys.length; index++) {
+        //     let x = allKeys[index];
+        //     obj[`image.${x}`] = (await S3Upload("products/" + result.data.product, req.files[x][0]));
+        // }
+        if(keys.length)
+        ProductVarient.findByIdAndUpdate(req.params.id, { $set: obj }, { new: true })
+            .populate("attributes.attribute attributes.option").exec()
+            .then(_data => {
+                return res.status(200).json({ status: 200, data: _data, errors: false, message: "ProductVARIENTS Updated Successfully" });
+            }).catch(err => {
+                console.log(err);
+                res.status(500).json({ status: 500, data: null, errors: true, message: "Error while updating varients" });
+            })
+        else
+        return res.status(400).json({ status: 400, data: null, errors: true, message: "Please select a image" });
+
+    } else {
+        return res.status(400).json({ status: 400, data: null, errors: true, message: "Invalid id" });
     }
 })
 

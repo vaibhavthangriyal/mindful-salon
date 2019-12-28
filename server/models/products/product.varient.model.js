@@ -12,7 +12,7 @@ const productType = new Schema({
     product: { type: mongoose.Schema.Types.ObjectId, ref: 'product' },
     attributes: [att],
     name: { type: String },
-    image: {
+    images: {
         primary:String,
         secondary:String
     },

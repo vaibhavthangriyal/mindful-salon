@@ -25,9 +25,11 @@
         </thead>
         <tbody>
           <tr *ngFor="let product of allproducts; let i = index">
-            <td *ngIf="product.image"><img src="{{productImagesArray[i]}}" alt="" width="25px" class="img-thumbnail">
+            <td class="avatar avatar-md" *ngIf="product?.images?.primary"><img
+                src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{product.images.primary}}" alt="" width="25px"
+                class="rounded-circle">
             </td>
-            <td *ngIf="!product.image"></td>
+            <td *ngIf="!product.images?.primary"></td>
             <td data-toggle="tooltip" data-placement="top" title="{{product.name}}">
               {{product?.name |  slice:0:20 |titlecase}}</td>
             <td>{{product?.category?.name | titlecase}}</td>
@@ -62,7 +64,7 @@
   <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
     <div class="modal-content tx-14">
       <div class="modal-header text-center">
-        <h6 class="modal-title ml-auto font-weight-bold  h4" id="exampleModalLabel3">
+        <h6 class="modal-title ml-auto font-weight-bold  h4" id="exampleModalLabel3" (click)="resetForm()">
           {{editing? 'Edit Product' : 'Add New Product'}} </h6>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -70,40 +72,94 @@
       </div>
       <div class="modal-body">
         <form [formGroup]="productForm" (ngSubmit)="submit()">
-          <div class="form-row">
-            <div class="form-group col-md-4">
-              <label for="inputEmail4">Product Name</label>
-              <input type="text" class="form-control" placeholder="Product Name Here" formControlName="name" required
-                [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
-              <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
-                <div *ngIf="f.name.errors.required">Product Name is required</div>
+          <div class="row">
+            <div class="col">
+              <div class="form-row">
+                <div class="" id="imagePreviewPrimary text-center">
+                  <!-- <img *ngIf="!currentproduct?.images.primary"
+                    src="https://www.cureuppharma.in/wp-content/uploads/2018/06/dummy.jpg" alt=""
+                    class="imagePreviewPrimary" height="50%"> -->
+                  <img *ngIf="currentproduct?.images?.primary"
+                    src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{currentproduct?.images.primary}}" alt=""
+                    class="imagePreviewPrimary">
+                  <h5 class="text-center">Primary Image</h5>
+                  <label class="btn btn-primary">
+                    Choose Image<input type="file" class="uploadFile img" value="Upload Photo"
+                      style="width: 0px;height: 0px;overflow: hidden;"
+                      (change)="onProductImageSelect($event, 'primary')">
+                  </label>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="" id="imagePreviewPrimary text-center">
+                  <h5 class="text-center">Secondary Image</h5>
+                  <!-- <img *ngIf="!currentproduct?.images.primary"
+                    src="https://www.cureuppharma.in/wp-content/uploads/2018/06/dummy.jpg" alt=""
+                    class="imagePreviewPrimary"> -->
+                  <img *ngIf="currentproduct?.images.secondary"
+                    src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{currentproduct?.images?.secondary}}" alt=""
+                    class="imagePreviewPrimary">
+                  <label class="btn btn-primary">
+                    Choose Image<input type="file" class="uploadFile img" value="Upload Photo"
+                      style="width: 0px;height: 0px;overflow: hidden;"
+                      (change)="onProductImageSelect($event, 'secondary')">
+                  </label>
+                </div>
               </div>
             </div>
-            <div class="form-group col-md-4">
-              <label for="brand">Brand</label>
-              <!-- <input type="text" class="form-control" placeholder="Brand here " formControlName="brand" required
-                [ngClass]="{ 'is-invalid': submitted && f.brand.errors }"> -->
-              <select class="form-control" formControlName="brand" required
-                [ngClass]="{ 'is-invalid': submitted && f.brand.errors }" name="brand">
-                <option selected disabled>Select Brand</option>
-                <option [ngValue]="brand._id" *ngFor="let brand of allBrand;let i=index">{{brand.name | titlecase}}
-                </option>
-              </select>
-              <div *ngIf="submitted && f.brand.errors" class="invalid-feedback">
-                <div *ngIf="f.brand.errors.required">Brand is required</div>
+            <div class="col">
+              <div class="form-row">
+                <!-- <div class="form-group col-md-4"> -->
+                <label for="inputEmail4">Product Name</label>
+                <input type="text" class="form-control" placeholder="Product Name Here" formControlName="name" required
+                  [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                  <div *ngIf="f.name.errors.required">Product Name is required</div>
+                </div>
+                <!-- </div> -->
+              </div>
+              <div class="form-row">
+                <!-- <div class="form-group col-md-4"> -->
+                <label for="brand">Brand</label>
+                <!-- <input type="text" class="form-control" placeholder="Brand here " formControlName="brand" required
+                    [ngClass]="{ 'is-invalid': submitted && f.brand.errors }"> -->
+                <select class="form-control" formControlName="brand" required
+                  [ngClass]="{ 'is-invalid': submitted && f.brand.errors }" name="brand">
+                  <option selected disabled>Select Brand</option>
+                  <option [ngValue]="brand._id" *ngFor="let brand of allBrand;let i=index">{{brand.name | titlecase}}
+                  </option>
+                </select>
+                <div *ngIf="submitted && f.brand.errors" class="invalid-feedback">
+                  <div *ngIf="f.brand.errors.required">Brand is required</div>
+                </div>
+                <!-- </div> -->
+              </div>
+              <div class="form-row">
+                <label for="inputEmail4">Type</label>
+                <select class="form-control" formControlName="type" required
+                  [ngClass]="{ 'is-invalid': submitted && f.type.errors }" [(ngModel)]="productType">
+                  <option selected disabled>Select product Type</option>
+                  <option [ngValue]="type._id" *ngFor="let type of allProductTypes;let i=index">
+                    {{type.name | titlecase}}
+                  </option>
+                </select>
+                <div *ngIf="submitted && f.type.errors" class="invalid-feedback">
+                  <div *ngIf="f.type.errors.required">Type is required</div>
+                </div>
+              </div>
+              <div class="form-row">
+                <!-- <div class="form-group col-md-4"> -->
+                <label for="inputPassword4">Extra Details</label>
+                <input type="text" class="form-control" id="inputPassword4" placeholder="Any Extra Detail here"
+                  formControlName="details" required [ngClass]="{ 'is-invalid': submitted && f.details.errors }">
+                <div *ngIf="submitted && f.details.errors" class="invalid-feedback">
+                  <div *ngIf="f.details.errors.required">Details is required</div>
+                </div>
+                <!-- </div> -->
               </div>
             </div>
-            <div class="form-group col-md-4">
-              <label for="inputPassword4">Extra Details</label>
-              <input type="text" class="form-control" id="inputPassword4" placeholder="Any Extra Detail here"
-                formControlName="details" required [ngClass]="{ 'is-invalid': submitted && f.details.errors }">
-              <div *ngIf="submitted && f.details.errors" class="invalid-feedback">
-                <div *ngIf="f.details.errors.required">Details is required</div>
-              </div>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group col-md-4">
+            <div class="col">
+              <!-- <div class="form-group col-md-4"> -->
               <label for="inputEmail4">Category</label>
               <select class="form-control" required [(ngModel)]="subCategory1" [ngModelOptions]="{standalone: true}"
                 (change)="getAllSubCategory1()">
@@ -115,107 +171,79 @@
               <div *ngIf="submitted && f.category.errors" class="invalid-feedback">
                 <div *ngIf="f.category.errors.required">Category is required</div>
               </div>
-            </div>
-            <div class="form-group col-md-4">
-              <label for="inputEmail4">Type</label>
-              <select class="form-control" formControlName="type" required
-                [ngClass]="{ 'is-invalid': submitted && f.type.errors }" [(ngModel)]="productType">
-                <option selected disabled>Select product Type</option>
-                <option [ngValue]="type._id" *ngFor="let type of allProductTypes;let i=index">{{type.name | titlecase}}
-                </option>
-              </select>
-              <div *ngIf="submitted && f.type.errors" class="invalid-feedback">
-                <div *ngIf="f.type.errors.required">Type is required</div>
+              <!-- </div> -->
+              <div class="form-row" *ngIf="(allSubCategories.length > 0)">
+                <!-- <div class="form-group col-md-4"> -->
+                <label for="inputEmail4"><b>Sub Category</b></label>
+                <select class="form-control" [(ngModel)]="subCategory2" [ngModelOptions]="{standalone: true}" required
+                  (change)="getAllSubCategory2()" [ngClass]="{ 'is-invalid': submitted && f.category.errors }">
+                  <option selected disabled>Select Sub Category</option>
+                  <option [ngValue]="category._id" *ngFor="let category of allSubCategories;let i=index">
+                    {{category?.name | titlecase}}
+                  </option>
+                </select>
+                <div *ngIf="submitted && f.category.errors" class="invalid-feedback">
+                  <div *ngIf="f.category.errors.required">Category is required</div>
+                </div>
+                <!-- </div> -->
               </div>
-            </div>
-            <div class="form-group ml-auto col-md-3">
-              <label for="inputEmail4">is Service</label>
-              <p-inputSwitch class="form-control" formControlName="is_service"></p-inputSwitch>
-            </div>
-          </div>
-          <div class="form-row" *ngIf="(allSubCategories.length > 0)">
-            <div class="form-group col-md-4">
-              <label for="inputEmail4"><b>Sub Category</b></label>
-              <select class="form-control" [(ngModel)]="subCategory2" [ngModelOptions]="{standalone: true}" required
-                (change)="getAllSubCategory2()" [ngClass]="{ 'is-invalid': submitted && f.category.errors }">
-                <option selected disabled>Select Sub Category</option>
-                <option [ngValue]="category._id" *ngFor="let category of allSubCategories;let i=index">
-                  {{category?.name | titlecase}}
-                </option>
-              </select>
-              <div *ngIf="submitted && f.category.errors" class="invalid-feedback">
-                <div *ngIf="f.category.errors.required">Category is required</div>
+              <div class="form-row" *ngIf="(allSubCategories2.length > 0)">
+                <div class="form-group col-md-4">
+                  <label for="inputEmail4"><b>Sub Category</b></label>
+                  <select class="form-control" [(ngModel)]="subCategory3" [ngModelOptions]="{standalone: true}" required
+                    (change)="getAllSubCategory3()" [ngClass]="{ 'is-invalid': submitted && f.category.errors }">
+                    <option selected disabled>Select Sub Category</option>
+                    <option [ngValue]="category._id" *ngFor="let category of allSubCategories2;let i=index">
+                      {{category?.name | titlecase}}
+                    </option>
+                  </select>
+                  <div *ngIf="submitted && f.category.errors" class="invalid-feedback">
+                    <div *ngIf="f.category.errors.required">Category is required</div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          <div class="form-row" *ngIf="(allSubCategories2.length > 0)">
-            <div class="form-group col-md-4">
-              <label for="inputEmail4"><b>Sub Category</b></label>
-              <select class="form-control" [(ngModel)]="subCategory3" [ngModelOptions]="{standalone: true}" required
-                (change)="getAllSubCategory3()" [ngClass]="{ 'is-invalid': submitted && f.category.errors }">
-                <option selected disabled>Select Sub Category</option>
-                <option [ngValue]="category._id" *ngFor="let category of allSubCategories2;let i=index">
-                  {{category?.name | titlecase}}
-                </option>
-              </select>
-              <div *ngIf="submitted && f.category.errors" class="invalid-feedback">
-                <div *ngIf="f.category.errors.required">Category is required</div>
+              <div class="form-row" *ngIf="(allSubCategories3.length > 0)">
+                <div class="form-group col-md-4">
+                  <label for="inputEmail4"><b>Sub Category</b></label>
+                  <select class="form-control" [(ngModel)]="subCategory4" [ngModelOptions]="{standalone: true}" required
+                    (change)="getAllSubCategory4()" [ngClass]="{ 'is-invalid': submitted && f.category.errors }">
+                    <option selected disabled>Select Sub Category</option>
+                    <option [ngValue]="category._id" *ngFor="let category of allSubCategories3;let i=index">
+                      {{category?.name | titlecase}}
+                    </option>
+                  </select>
+                  <div *ngIf="submitted && f.category.errors" class="invalid-feedback">
+                    <div *ngIf="f.category.errors.required">Category is required</div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          <div class="form-row" *ngIf="(allSubCategories3.length > 0)">
-            <div class="form-group col-md-4">
-              <label for="inputEmail4"><b>Sub Category</b></label>
-              <select class="form-control" [(ngModel)]="subCategory4" [ngModelOptions]="{standalone: true}" required
-                (change)="getAllSubCategory4()" [ngClass]="{ 'is-invalid': submitted && f.category.errors }">
-                <option selected disabled>Select Sub Category</option>
-                <option [ngValue]="category._id" *ngFor="let category of allSubCategories3;let i=index">
-                  {{category?.name | titlecase}}
-                </option>
-              </select>
-              <div *ngIf="submitted && f.category.errors" class="invalid-feedback">
-                <div *ngIf="f.category.errors.required">Category is required</div>
-              </div>
-            </div>
-          </div>
-          <div class="form-row" *ngIf="(allSubCategories4.length > 0)">
-            <div class="form-group col-md-4">
-              <label for="inputEmail4"><b>Sub Category</b></label>
-              <select class="form-control" [(ngModel)]="subCategory4" [ngModelOptions]="{standalone: true}" required
-                [ngClass]="{ 'is-invalid': submitted && f.category.errors }">
-                <option selected disabled>Select Sub Category</option>
-                <option [ngValue]="category._id" *ngFor="let category of allSubCategories4;let i=index">
-                  {{category?.name | titlecase}}
-                </option>
-              </select>
-              <div *ngIf="submitted && f.category.errors" class="invalid-feedback">
-                <div *ngIf="f.category.errors.required">Category is required</div>
-              </div>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group col-md-3" *ngIf="editShowImage">
-              <label>Product Image</label>
-              <div class="col-sm-3 col-md-2 col-lg text-center">
-                <div class="avatar avatar-xxl avatar-online"><img src="{{editImage}}" class="rounded-circle" alt="">
+              <div class="form-row" *ngIf="(allSubCategories4.length > 0)">
+                <label for="inputEmail4"><b>Sub Category</b></label>
+                <select class="form-control" [(ngModel)]="subCategory4" [ngModelOptions]="{standalone: true}" required
+                  [ngClass]="{ 'is-invalid': submitted && f.category.errors }">
+                  <option selected disabled>Select Sub Category</option>
+                  <option [ngValue]="category._id" *ngFor="let category of allSubCategories4;let i=index">
+                    {{category?.name | titlecase}}
+                  </option>
+                </select>
+                <div *ngIf="submitted && f.category.errors" class="invalid-feedback">
+                  <div *ngIf="f.category.errors.required">Category is required</div>
                 </div>
               </div>
             </div>
-            <div class="form-group col-md-3">
-              <label for="">Upload Image</label>
-              <div class="custom-file">
-                <label class="custom-file-label" for="customFile">Select Product Image</label>
-                <input type="file" formControlName="image" (change)="selectFile($event)" class="custom-file-input"
-                  id="customFile">
-              </div>
+          </div>
+          <div class="form-row ml-auto">
+            <div class="form-group offset-md-4 col-md-3">
+              <label for="inputEmail4">is Service</label>
+              <p-inputSwitch class="form-control" formControlName="is_service"></p-inputSwitch>
             </div>
-            <div class="form-group ml-auto col-md-3">
+            <div class="form-group  col-md-3">
               <label for="">Status</label>
               <p-inputSwitch class="form-control" formControlName="is_active"></p-inputSwitch>
             </div>
           </div>
           <br>
-          <div class=" text-center">
+          <div class="text-center">
             <button type="submit" class="btn btn-primary mx-1">Save</button>
             <button type="button" class="btn btn-primary " data-dismiss="modal">Close</button>
           </div>
@@ -372,7 +400,6 @@
 </div>
 
 
-
 <!-- ****************** ADD STOCK MODAL ********************************** -->
 <div class="modal fade" id="stockModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
   aria-hidden="true">
@@ -403,23 +430,18 @@
 <div class="modal fade" id="varientModal" tabindex="-1" role="dialog" aria-labelledby="varientModal" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
     <div class="modal-content">
-      <div class="card">
-        <div class="card-header modal-header">
-          <div class="col-md-10">
-            <div class="font-weight-bold h5">{{currentproduct?.name | uppercase}}</div>
-          </div>
-          <div class="col-md-2">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-        </div>
+      <div class="modal-header">
+        <h5 class="modal-title">{{currentproduct?.name | uppercase}}</h5>
+        <h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span
+              aria-hidden="true">&times;</span>
+          </button><button type="button" class="btn btn-primary float-right btn-sm mx-1" data-toggle="modal"
+            data-target="#addVarientModal" (click)="resetProductVarientForm()">Add
+            Varient
+          </button>
+        </h5>
       </div>
-      <div class="card-body">
-        <button type="button" class="btn btn-primary btn-sm mx-1" data-toggle="modal" data-target="#addVarientModal"
-          (click)="resetProductVarientForm()">Add
-          Varient
-        </button>
+      <div class="modal-body">
         <table class="table" *ngIf="(varientArray.length > 0)">
           <thead>
             <tr>
@@ -436,7 +458,11 @@
           </thead>
           <tbody>
             <tr *ngFor="let varient of varientArray; let i = index;">
-              <td scope="row">{{i+1}}</td>
+              <td class="avatar avatar-md" *ngIf="varient?.images?.primary"><img
+                  src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{varient.images.primary}}" alt="" width="25px"
+                  class="rounded-circle">
+              </td>
+              <td *ngIf="!varient.images?.primary"></td>
               <!-- <td scope="row">{{varient?.sku_id}}</td> -->
               <td scope="row">{{currentproduct?.name | titlecase}} <span
                   *ngFor="let attribute of varient?.attributes ; let index = index;">{{attribute?.option?.value | titlecase}}
@@ -519,8 +545,9 @@
 
 
 <!-- ****************** ADD IMAGES TO VARIENT MODAL ********************************** -->
-<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+<div class="modal fade" *ngIf="currentVarient" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModal"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title ml-auto font-weight-bold" id="exampleModalLabel">Add Images</h5>
@@ -529,39 +556,110 @@
         </button>
       </div>
       <div class="modal-body">
-        <div class="row">
-          <div class="col">
-            <img src="https://www.cureuppharma.in/wp-content/uploads/2018/06/dummy.jpg" class="img-fluid" alt="">
-            <div class="row">
-              <input type="file" name="" id="">
+        <div class="container">
+          <div class="row">
+            <div class="col imgUp">
+              <div class="" id="imagePreviewPrimary">
+                <h5 class="text-center">Primary Image</h5>
+                <img *ngIf="currentVarient?.images?.primary"
+                  src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{currentVarient?.images.primary}}" alt=""
+                  class="imagePreviewPrimary">
+                <label class="btn btn-primary">
+                  Choose Image<input type="file" class="uploadFile img" value="Upload Photo"
+                    style="width: 0px;height: 0px;overflow: hidden;" (change)="onSelectFile($event, 'primary')">
+                </label>
+              </div>
             </div>
-          </div>
-          <div class="divider-text divider-vertical" data-text="and"></div>
-          <div class="col">
-            <img src="https://www.cureuppharma.in/wp-content/uploads/2018/06/dummy.jpg" class="img-fluid" alt="">
-            <div class="row">
-              <input type="file" name="" id="">
+            <div class="divider-text divider-vertical" data-text="and">
             </div>
+            <div class="col imgUp">
+              <div class="" id="imagePreviewSecondary">
+                <h5 class="text-center">Secondary Image</h5>
+                <img *ngIf="currentVarient?.images?.secondary"
+                  src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{currentVarient?.images.secondary}}" alt=""
+                  class="imagePreviewPrimary">
+                <label class="btn btn-primary">
+                  Choose Image<input type="file" class="uploadFile img" value="Upload Photo"
+                    style="width: 0px;height: 0px;overflow: hidden;" (change)="onSelectFile($event, 'secondary')">
+                </label>
+              </div>
+            </div>
+            <!-- <div class="divider-text divider-vertical" data-text="and"></div>
+            <div class="col">
+              <div class="divider-text divider-vertical" data-text="and"></div>
+  
+            </div> -->
+            <!-- <div class="" *ngIf="(galleryImages.length > 0)">
+            <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
           </div>
-          <div class="divider-text divider-vertical" data-text="and"></div>
-          <div class="col">
-            <img src="https://www.cureuppharma.in/wp-content/uploads/2018/06/dummy.jpg" class="img-fluid" alt="">
+          <div class="jumbotron text-center" *ngIf="!(galleryImages.length > 0)">
+            NO IMAGES FOUND!! ADD NEW IMAGES
           </div>
-          <div class="divider-text divider-vertical" data-text="and"></div>
-
+          <input type="file" name="" id="" (change)="onSelectFile($event)" multiple> -->
+          </div>
+          <div class="divider-text">Upload Images</div>
+          <div class="row ml-auto">
+            <button class="btn btn-primary" *ngIf="!uploadingImages" (click)="uploadImages()">Upload Images</button>
+            <button class="btn btn-primary" type="button" disabled *ngIf="uploadingImages">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Uploading...
+            </button>
+          </div>
         </div>
-        <!-- <div class="" *ngIf="(galleryImages.length > 0)">
-          <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
-        </div>
-        <div class="jumbotron text-center" *ngIf="!(galleryImages.length > 0)">
-          NO IMAGES FOUND!! ADD NEW IMAGES
-        </div>
-        <input type="file" name="" id="" (change)="onSelectFile($event)" multiple> -->
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-        <button class="btn btn-primary" (click)="uploadImages()">Upload Images</button>
       </div>
     </div>
   </div>
-</div>
+
+
+
+  <!-- ****************** ADD IMAGES TO VARIENT MODAL ********************************** -->
+  <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title ml-auto font-weight-bold" id="exampleModalLabel">Add Images</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <div class="row">
+              <div class="col imgUp">
+                <div class="" id="imagePreviewPrimary">
+                  <h5 class="text-center">Primary Image</h5>
+                  <img *ngIf="currentproduct?.images.primary"
+                    src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{currentproduct?.images.primary}}" alt=""
+                    class="imagePreviewPrimary">
+                  <label class="btn btn-primary">
+                    Choose Image<input type="file" class="uploadFile img" value="Upload Photo"
+                      style="width: 0px;height: 0px;overflow: hidden;" (change)="onSelectFile($event, 'primary')">
+                  </label>
+                </div>
+              </div>
+              <div class="divider-text divider-vertical" data-text="and">
+              </div>
+              <div class="col imgUp">
+                <div class="" id="imagePreviewSecondary">
+                  <h5 class="text-center">Secondary Image</h5>
+                  <img *ngIf="currentproduct?.images.secondary"
+                    src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{currentproduct?.images.secondary}}" alt=""
+                    class="imagePreviewPrimary">
+                  <label class="btn btn-primary">
+                    Choose Image<input type="file" class="uploadFile img" value="Upload Photo"
+                      style="width: 0px;height: 0px;overflow: hidden;" (change)="onSelectFile($event, 'secondary')">
+                  </label>
+                </div>
+              </div>
+              <div class="divider-text">Upload Images</div>
+              <div class="row ml-auto">
+                <button class="btn btn-primary" *ngIf="!uploadingImages" (click)="uploadImages()">Upload Images</button>
+                <button class="btn btn-primary" type="button" disabled *ngIf="uploadingImages">
+                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  Uploading...
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>

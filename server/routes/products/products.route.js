@@ -6,6 +6,7 @@ const isEmpty = require('../../utils/is-empty');
 const mongodb = require('mongoose').Types;
 const moment = require('moment');
 const authorizePrivilege = require("../../middleware/authorizationMiddleware");
+const { upload, S3Upload } = require("../../utils/image-upload");
 
 //GET ALL PRODUCTS CREATED BY SELFF
 router.get("/", authorizePrivilege("GET_ALL_PRODUCTS_OWN"), (req, res) => {
@@ -101,7 +102,7 @@ router.get("/customer", authorizePrivilege("GET_ALL_CUSTOMER_PRODUCTS"), (req, r
 
 
 // ADD NEW PRODUCT
-router.post('/', authorizePrivilege("ADD_NEW_PRODUCT"), async (req, res) => {
+router.post('/', authorizePrivilege("ADD_NEW_PRODUCT"), upload.fields([{ name: "primary", maxCount: 1 }, { name: "secondary", maxCount: 1 }]), async (req, res) => {
     let result = productCtrl.verifyCreate(req.body);
     if (!isEmpty(result.errors)) {
         return res.status(400).json({ status: 400, data: null, errors: result.errors, message: "Fields Required" });
@@ -110,6 +111,14 @@ router.post('/', authorizePrivilege("ADD_NEW_PRODUCT"), async (req, res) => {
     let productId = "P" + moment().year() + moment().month() + moment().date() + moment().hour() + moment().minute() + moment().second() + moment().milliseconds() + Math.floor(Math.random() * (99 - 10) + 10);
     result.data.product_id = productId;
     let newProduct = new Product(result.data);
+    if (req.files) {
+        let keys = Object.keys(req.files);
+        result.data.images = {};
+        if (keys.length) {
+            newProduct.images["primary"] = (req.files["primary"] && req.files["primary"].length) ? (await S3Upload("products/" + newProduct._id, req.files["primary"][0])) : null;
+            newProduct.images["secondary"] = (req.files["secondary"] && req.files["secondary"].length) ? (await S3Upload("products/" + newProduct._id, req.files["secondary"][0])) : null;
+        }
+    }
     newProduct
         .save()
         .then(product => {
@@ -231,6 +240,38 @@ router.put("/stock", authorizePrivilege("UPDATE_PRODUCT"), async (req, res) => {
     }
     else {
         return res.status(400).json({ status: 400, data: null, errors: true, message: "Invalid product id" });
+    }
+})
+
+
+//UPLOAD IMAGES
+router.put("/images/:id", authorizePrivilege("UPDATE_PRODUCT"), upload.fields([{ name: "primary", maxCount: 1 }, { name: "secondary", maxCount: 1 }]), async (req, res) => {
+    if (mongodb.ObjectId.isValid(req.params.id)) {
+        let keys = Object.keys(req.files);
+        let obj = {};
+        if (keys.length) {
+            obj["images.primary"] = (req.files["primary"] && req.files["primary"].length) ? (await S3Upload("varient/" + req.params.id, req.files["primary"][0])) : null;
+            obj["images.secondary"] = (req.files["secondary"] && req.files["secondary"].length) ? (await S3Upload("varient/" + req.params.id, req.files["secondary"][0])) : null;
+        }
+        // let obj = {};
+        // for (let index = 0; index < allKeys.length; index++) {
+        //     let x = allKeys[index];
+        //     obj[`image.${x}`] = (await S3Upload("products/" + result.data.product, req.files[x][0]));
+        // }
+        if (keys.length)
+            Product.findByIdAndUpdate(req.params.id, { $set: obj }, { new: true })
+                .populate("attributes.attribute attributes.option").exec()
+                .then(_data => {
+                    return res.status(200).json({ status: 200, data: _data, errors: false, message: "Product Updated Successfully" });
+                }).catch(err => {
+                    console.log(err);
+                    res.status(500).json({ status: 500, data: null, errors: true, message: "Error while updating Product" });
+                })
+        else
+            return res.status(400).json({ status: 400, data: null, errors: true, message: "Please select a image" });
+
+    } else {
+        return res.status(400).json({ status: 400, data: null, errors: true, message: "Invalid id" });
     }
 })
 module.exports = router;
