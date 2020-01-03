@@ -33,6 +33,7 @@ export class LoginComponent implements OnInit {
           this.toaster.error("Check Email or Password", "Validation Error")
         } else {
           this.router.navigateByUrl('/home')
+          window.open('/home' , '_self');
         }
       })
   }

@@ -11,7 +11,7 @@
     <div class="card-header">
       <h2 class="float-left">Category Management</h2>
       <a class="btn btn-primary text-white float-right" (click)="resetForm()" data-toggle="modal"
-        data-target="#modal3">Add New Category</a>
+        data-target="#modal3" *ngIf="!(showImageForSubcategories)">Add New Category</a>
     </div>
     <div class="card-body">
       <table class="table table table-bordered table-hover table-striped" datatable [dtOptions]="dtOptions"
@@ -77,12 +77,37 @@
               <div *ngIf="f.name.errors.required">Category Name Is Required</div>
             </div>
           </div>
+          <div class="form-row" *ngIf="!(editing) && (categoryForm.get('type').value != 'subcategory') && !(showImageForSubcategories)">
+            <img *ngIf="!filenameCategoryImage"
+              src="https://binsar.s3.ap-south-1.amazonaws.com/default-images/profile-picture.png" class="img-thumbnail"
+              style="height: 150px;" />
+            <img *ngIf="filenameCategoryImage" [src]="filenameCategoryImage" alt="{{filenameCategoryImage}}"
+              class="img-thumbnail" style="height: 150px;" />
+            <br>
+            <label class="custom-file-upload" style="color: green;">
+              <input type="file" (change)="onCategoryImageSelect($event)" style="display: none;" />
+              <b>Choose image</b>
+            </label>
+          </div>
+          <div class="form-row" *ngIf="(editing) && (categoryForm.get('type').value != 'subcategory') && !(showImageForSubcategories) ">
+            <img *ngIf="!filenameCategoryImage"
+              src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{currentcategory?.image}}"
+              class="img-thumbnail" style="height: 150px;" />
+            <img *ngIf="filenameCategoryImage" [src]="filenameCategoryImage" alt="{{filenameCategoryImage}}"
+              class="img-thumbnail" style="height: 150px;" />
+            <br>
+            <label class="custom-file-upload" style="color: green;">
+              <input type="file" (change)="onCategoryImageSelect($event)" style="display: none;" />
+              <b>Choose image</b>
+            </label>
+          </div>
           <br>
           <div class="text-center">
             <button type="submit" class="btn btn-primary tx-13 mx-1" *ngIf="!editing">Save</button>
-            <button type="button" class="btn btn-primary tx-13 mx-1" *ngIf="editing" data-toggle="modal"
-              data-target="#attributesModal">Add New</button>
+            <!-- <button type="button" class="btn btn-primary tx-13 mx-1" *ngIf="editing" data-toggle="modal"
+              data-target="#attributesModal">Add New</button> -->
             <button type="submit" class="btn btn-primary tx-13 mx-1" *ngIf="editing">Edit</button>
+            <button type="button" class="btn btn-primary tx-13 mx-1" data-dismiss="modal">close</button>
           </div>
           <br>
         </form>
@@ -162,9 +187,10 @@
       </div>
       <br>
       <div class="text-center">
-        <button type="button" class="btn btn-primary tx-13 mx-1" (click)="yesDelete()">Yes,delete</button>
-        <button type="button" class="btn btn-primary tx-13" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger tx-13 mx-1" (click)="yesDelete()">Yes,delete</button>
+        <button type="button" class="btn btn-secondary tx-13" data-dismiss="modal">Close</button>
       </div>
+      <br>
     </div>
   </div>
 </div>

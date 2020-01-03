@@ -6,60 +6,6 @@
       <a routerLink="/home" class="df-logo">dash<span>forge</span></a>
       <a id="mainMenuClose" href=""><i></i></a>
     </div>
-    <!-- <ul class="nav navbar-menu"> -->
-      <!-- <li class="nav-label pd-l-20 pd-lg-l-25 d-lg-none">Main Navigation</li> -->
-      <!-- <li class="nav-item with-sub dropdown">
-        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
-          aria-haspopup="true" aria-expanded="false" class="nav-link"><i data-feather="layers"></i> User Management</a>
-        <div class="navbar-menu-sub">
-          <div class="d-lg-flex">
-            <ul>
-              <li class="nav-label">Manager Users</li>
-              <li class="nav-sub-item">
-                <a class="nav-sub-link" routerLink="user">
-                  <i data-feather="log-in"></i> User Management
-                </a>
-              </li>
-            </ul>
-            <ul>
-              <li class="nav-label">Manage User Roles</li>
-              <a class="dropdown-item" routerLink="userrole">User
-                Roles</a>
-            </ul>
-          </div>
-        </div>
-      </li> -->
-      <!-- <li class="nav-item"><a routerLink="product" class="nav-link"><i data-feather="box"></i> Produts Management</a>
-      </li> -->
-      <!-- <li class="nav-item"><a routerLink="orders" class="nav-link"> Order Management</a></li> -->
-      <!-- <li class="nav-item"><a routerLink="returnorder"> Return Order</a></li> -->
-      <!-- <li class="nav-item"><a routerLink="challan"> Challan Management</a></li> -->
-      <!-- <li class="nav-item with-sub dropdown">
-        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
-          aria-haspopup="true" aria-expanded="false" class="nav-link"><i data-feather="layers"></i> Admin Panel</a>
-        <div class="navbar-menu-sub">
-          <div class="d-lg-flex">
-            <ul>
-              <li class="nav-sub-item">
-                <a class="nav-sub-link" routerLink="customer">
-                  <i data-feather="log-in"></i> Customer Management
-                </a>
-              </li>
-              <li class="nav-sub-item">
-                <a class="nav-sub-link" routerLink="vehicle">
-                  <i data-feather="log-in"></i> Vehicle Management
-                </a>
-              </li>
-              <li class="nav-sub-item">
-                <a class="nav-sub-link" routerLink="drivers">
-                  <i data-feather="log-in"></i> Driver Management
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </li> -->
-    <!-- </ul> -->
   </div>
   <div class="navbar-right">
     <a id="navbarSearch" href="" class="search-link"><i></i></a>
@@ -121,7 +67,7 @@
         <h6 class="tx-semibold mg-b-5" *ngIf="authService.user">{{me?.full_name | titlecase}} </h6>
         <p class="mg-b-25 tx-12 tx-color-03" *ngIf="authService.user">{{me?.role.name | titlecase}}</p>
 
-        <a routerLink="auth/editprofile" class="dropdown-item"><i data-feather="edit-3"></i> Edit Profile</a>
+        <a routerLink="profile" class="dropdown-item"><i data-feather="edit-3"></i> Edit Profile</a>
         <a routerLink="auth/profile" class="dropdown-item"><i data-feather="user"></i> View Profile</a>
         <div class="dropdown-divider"></div>
         <a href="page-help-center.html" class="dropdown-item"><i data-feather="help-circle"></i> Help Center</a>

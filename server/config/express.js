@@ -16,7 +16,7 @@ const passport = require('./passport');
 const validateEnv = require("../middleware/validateEnv");
 
 const app = express();
-
+require('../models/user/vendor.model');
 if (config.env === 'development') {
   app.use(logger('dev'));
 }
@@ -76,7 +76,10 @@ app.use((err, req, res, next) => {
     err.status = 400;
   }
   res.status(err.status || 500).json({
-    message: err.message
+    message: err.message,
+    errors: true,
+    status: err.status || 500,
+    data: null
   });
   next(err);
 });

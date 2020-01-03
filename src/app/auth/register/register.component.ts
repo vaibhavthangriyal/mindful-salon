@@ -4,93 +4,75 @@ import { FormGroup, FormControl, Validators, ValidationErrors, FormBuilder } fro
 
 
 import { AuthService } from '../auth.service';
+import { VendorService } from '../../core/vendor/shared/vendor.service';
+import { ToastrService } from 'ngx-toastr';
+import { ResponseModel } from '../../shared/shared.model';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Token } from '@angular/compiler';
+import { TokenStorage } from '../token.storage';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['../auth.component.scss']
+  styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
 
-  city : any[]=["Delhi", "Noida", "Gurgoan", "Benglore"];
-  district: any[]=["Dist1", "Dist2", "Dist3"];
-  region: any[]=["South", "East", "West", "North"];
-  title: any[]=["Mr.","Ms.","Mrs."]
-  userRoles: any[] = [
-    "Country Manager", "Business Unit Director (BUD)", "Regional Sales Manager", "First Line Manage (FLM)", "Representative (Rep)", "Commercial Excellence Director", "Key Account Manager", "Finance Manager", "HR Manager", "Supply Chain Manager"
-  ];
-  constructor(private authService: AuthService, private router: Router, private formBuilder: FormBuilder) { }
+  submitted: Boolean = false;
+  vendorForm: FormGroup;
+  constructor(
+    private formBuilder: FormBuilder, private vendorService: VendorService, private toasterService: ToastrService,
+    private router: Router, private http: HttpClient, private tokenService: TokenStorage
+  ) {
+    this.initVendorForm();
+  }
 
   ngOnInit() {
-    this.initForm();
   }
 
-  passwordsMatchValidator(control: FormControl): ValidationErrors {
-    let password = control.root.get('password');
-    return password && control.value !== password.value ? {
-      passwordMatch: true
-    } : null;
+  get f() { return this.vendorForm.controls; }
+
+  initVendorForm() {
+    this.vendorForm = this.formBuilder.group({
+      email: ['', [Validators.required]],
+      mobile_number: ['', [Validators.required]],
+      password: ['', [Validators.required]],
+      full_name: ['', Validators.required],
+      city: ['', Validators.required]
+    });
+  }
+  onSubmit() {
+    this.submitted = true;
+    console.log(this.vendorForm.value);
+    if (this.vendorForm.invalid) {
+      this.toasterService.error('Form Is Invalid', 'Fill All Fields');
+      return;
+    } else {
+      this.registerVendor(this.vendorForm.value).subscribe((res: ResponseModel) => {
+        console.log(res);
+        if (res.errors) {
+          if (res.message = 'Email already registered') {
+            this.toasterService.error('Email Already Registred', 'Try Again');
+          } else {
+            this.toasterService.error('Error While Adding Vendor', 'Try Again');
+          }
+        } else {
+          this.toasterService.success('Vendor Added Successfully', 'Success');
+          this.resetVendorForm();
+          this.router.navigateByUrl('/login');
+        }
+      });
+    }
   }
 
-  userForm = new FormGroup({
-    fullname: new FormControl('', [Validators.required]),
-    email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required]),
-    repeatPassword: new FormControl('', [Validators.required, this.passwordsMatchValidator])
-  })
-
-  get fullname(): any { return this.userForm.get('fullname'); }
-  get email(): any { return this.userForm.get('email'); }
-  get password(): any { return this.userForm.get('password'); }
-  get repeatPassword(): any { return this.userForm.get('repeatPassword'); }
-
-  // register() {
-  //   if(!this.userForm.valid) return
-  //   let { fullname, email, password, repeatPassword } = this.userForm.getRawValue();
-  //   this.authService.register(fullname, email, password, repeatPassword)
-  //   .subscribe(data => {
-  //     // this.router.navigate(['']);
-  //     console.log("USER ADDED")
-  //   })
-  // }
-
-  submit() {
-    const user = this.userForm.value;
-    console.log(user)
-    this.authService.register(user).subscribe(res => {
-      console.log(res);
-      console.log(user)
-    })
+  resetVendorForm() {
+    this.vendorForm.reset();
+    this.initVendorForm();
+    this.submitted = false;
   }
 
-  initForm() {
-    this.userForm = this.formBuilder.group({
-      employee_id: ['001', Validators.required],
-      first_name: ['Admin', Validators.required],
-      last_name: ['example', Validators.required],
-      email: ['admin@example.com', Validators.required],
-      // is_active: ['true', Validators.required],
-      joining_date: new Date(),
-      password: ['asd123', Validators.required],
-      therapy_line: ['therapy', Validators.required],
-      therapy_line_id: ['th1', Validators.required],
-      manager_id: ['mg001', Validators.required],
-      position: ['admin', Validators.required],
-      title: ['Mr', Validators.required],
-      mobile_phone: ['9999999999', Validators.required],
-      home_phone: ['9999999999', Validators.required],
-      business_phone: ['9999999999', Validators.required],
-      business_extension: ['+23', Validators.required],
-      region: ['North', Validators.required],
-      city: ['New Delhi', Validators.required],
-      district: ['Delhi', Validators.required],
-      address: ['Long Address here', Validators.required],
-      postal_code: ['110022', Validators.required],
-      notes: ['NOne ', Validators.required],
-      photo: ['', Validators.required],
-      attachments: ['', Validators.required],
-      // repeatPassword: ['', Validators.required],
-    })
+  registerVendor(vendor) {
+    return this.http.post('/api/auth/vendorregister', vendor);
   }
 
 }

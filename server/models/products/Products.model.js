@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-
-
 // Create Schema
 const ProductSchema = new Schema({
     brand: { type: mongoose.Schema.Types.ObjectId, ref: 'brand', required: true, lowercase: true, trim: true },
@@ -11,10 +9,14 @@ const ProductSchema = new Schema({
     details: { type: String, default: "", lowercase: true, trim: true },
     is_active: { type: Boolean, default: true, required: true },
     is_available: { type: Boolean, default: false, required: false },
-    image: { type: String },
+    is_service: { type: Boolean, default: false, required: false },
+    images: {
+        primary: String,
+        secondary: String
+    },
     name: { type: String, required: true, lowercase: true, trim: true },
     product_id: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    base_price: { type: Number, required: true },
+    base_price: { type: Number },
     type: { type: mongoose.Schema.Types.ObjectId, ref: 'product_type', required: true },
     stock: { type: Number, default: 0, required: true },
 }, {

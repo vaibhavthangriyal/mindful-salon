@@ -8,28 +8,43 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const Ticket = require("../models/ticket.model");
 const authorizePrivilege = require("../middleware/authorizationMiddleware");
-const multer = require("multer");
-const upload = multer({ storage: multer.memoryStorage() });
-const uuid = require("uuid/v1");
-const AWS = require("aws-sdk");
-const S3 = new AWS.S3({
-  accessKeyId: process.env.AWS_S3_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
-  region: process.env.AWS_S3_REGION
-});
+const { upload, S3Upload } = require("../utils/image-upload");
 
+//GET OWN USER
+router.get('/me', authorizePrivilege("GET_ALL_USERS"), async (req, res) => {
+  User.findById(req.user._id, "-password").
+    populate('role')
+    .then(_user => {
+      // _user.populate('role')
+      // .then((_user) => {
+      if (_user) {
+        return res.json({ status: 200, message: "Own Data", errors: false, data: _user });
+      } else {
+        return res.json({ status: 200, message: "Own Data Not Found", errors: false, data: null });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.json({ status: 200, message: "Error While Populating", errors: true, data: null });
+    })
+  // }).catch((err) => {
+  //   console.log(err);
+  //   return res.json({ status: 200, message: "Internal Server Error", errors: true, data: null });
+  // })
+})
 
 //GET all users
 router.get('/', authorizePrivilege("GET_ALL_USERS"), async (req, res) => {
   try {
     const allUsers = await User
-      .find({ _id: { $ne: req.user._id }, role: { $ne: process.env.CUSTOMER_ROLE } })
-      .populate("role ")
+      .find({ _id: { $ne: req.user._id }, role: process.env.SALES_ROLE })
+      .populate("role")
       .exec();
     // console.log(allUsers);
     return res.json({ status: 200, message: "All users", errors: false, data: allUsers });
   }
   catch (err) {
+    console.log(err);
     return res.status(500).json({ status: 500, errors: true, data: null, message: "Error while fetching users" });
   }
 })
@@ -82,6 +97,24 @@ router.get('/customer', authorizePrivilege("GET_ALL_USERS"), async (req, res) =>
     })
 })
 
+
+// //GET ALL VEDNORS
+router.get('/vendors', authorizePrivilege("GET_ALL_USERS"), async (req, res) => {
+  User
+    .find({ role: process.env.VENDOR_ROLE })
+    .populate("role")
+    .then(_customers => {
+      if (_customers.length > 0) {
+        return res.json({ status: 200, message: "ALL VENDORS", errors: false, data: _customers });
+      } else {
+        return res.json({ status: 200, message: "NO CUSTOMER FOUND", errors: false, data: _customers });
+      }
+    }).catch(err => {
+      res.status(500).json({ status: 500, errors: true, data: null, message: "Error while fetching users" });
+    })
+})
+
+
 // DELETE a user
 router.delete('/:id', authorizePrivilege("DELETE_USER"), (req, res) => {
   if (mongodb.ObjectID.isValid(req.params.id)) {
@@ -103,7 +136,12 @@ router.delete('/:id', authorizePrivilege("DELETE_USER"), (req, res) => {
 router.put('/id/:id', authorizePrivilege("UPDATE_USER"), (req, res) => {
   if (mongodb.ObjectID.isValid(req.params.id)) {
     // let user = (({ full_name, email, role }) => ({ full_name, email, role }))(req.body);
-    const result = userCtrl.verifyUpdate(req.body);
+    let result;
+    if (req.body.role === process.env.VENDOR_ROLE) {
+      result = userCtrl.verifyVendorUpdate(req.body);
+    } else {
+      result = userCtrl.verifyUpdate(req.body);
+    }
     if (!isEmpty(result.errors)) {
       return res.status(400).json({ status: 400, data: null, errors: result.errors, message: "Fields required" })
     }
@@ -113,22 +151,13 @@ router.put('/id/:id', authorizePrivilege("UPDATE_USER"), (req, res) => {
         return res.status(500).json({ status: 500, errors: true, data: null, message: "Error while updating user data" });
       }
       else {
-        doc.populate("role route area").execPopulate().then(d => {
-          if (!d)
-            return res.status(200).json({ status: 200, errors: true, data: doc, message: "No User Found" });
-          else {
-            d = d.toObject();
-            delete d.password;
-            console.log("Updated User", d);
-            res.status(200).json({ status: 200, errors: false, data: d, message: "Updated User" });
-          }
-        }
-        ).catch(e => {
-          console.log(e);
-          return res.status(500).json({ status: 500, errors: true, data: null, message: "Error while updating user details" });
-        });
+        if (!doc)
+          return res.status(200).json({ status: 200, errors: true, data: doc, message: "No User Found" });
+        doc = doc.toObject();
+        delete doc.password;
+        res.status(200).json({ status: 200, errors: false, data: doc, message: "Updated User" });
       }
-    })
+    }).populate("role route area")
   } else {
     return res.status(400).json({ status: 400, errors: true, data: null, message: "Invalid user id" });
     // return res.status(404).send("ID NOT FOUND");
@@ -136,38 +165,80 @@ router.put('/id/:id', authorizePrivilege("UPDATE_USER"), (req, res) => {
 })
 
 // UPDATE USER OWN
-router.put('/me', authorizePrivilege("UPDATE_USER_OWN"), (req, res) => {
+router.put('/me', authorizePrivilege("UPDATE_USER_OWN"), upload.single("profile_picture"), async (req, res) => {
   let result;
-  if (req.user.role._id == process.env.DELIVERY_BOY_ROLE) {
-    result = userCtrl.verifyDBoyProfileUpdateOwn(req.body)
+  // if (req.user.role._id == process.env.DELIVERY_BOY_ROLE) {
+  //   result = userCtrl.verifyDBoyProfileUpdateOwn(req.body)
+  // } else
+  if (req.user.role._id == process.env.VENDOR_ROLE) {
+    result = userCtrl.verifyVendorUpdate(req.body)
   } else {
     result = userCtrl.verifyUpdate(req.body)
   }
   if (!isEmpty(result.errors)) {
     return res.status(400).json({ status: 400, data: null, errors: result.errors, message: "Fields required" })
   }
-  User.findByIdAndUpdate(req.user._id, { $set: result.data }, { new: true }, (err, doc) => {
+  if (req.file) {
+    try {
+      result.data.profile_picture = await S3Upload("profile-pictures", req.file);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  if (result.data.password) {
+    let salt = bcrypt.genSaltSync(10);
+    let hash = bcrypt.hashSync(result.data.password, salt)
+    result.data.password = hash;
+  }
+  User.findByIdAndUpdate(req.user._id, { $set: result.data }, { new: true }, (err, d) => {
     if (err) {
       console.log(err);
       return res.status(500).json({ status: 500, errors: true, data: null, message: "Error while updating user data" });
     }
     else {
-      doc.populate("role route").execPopulate().then(d => {
-        if (!d)
-          return res.status(200).json({ status: 200, errors: true, data: doc, message: "No User Found" });
-        else {
-          d = d.toObject();
-          delete d.password;
-          console.log("Updated User", d);
-          res.status(200).json({ status: 200, errors: false, data: d, message: "Updated User" });
-        }
-      }
-      ).catch(e => {
-        console.log(e);
-        return res.status(500).json({ status: 500, errors: true, data: null, message: "Error while updating user details" });
-      });
+      // doc.populate("role route").execPopulate().then(d => {
+      //   if (!d)
+      //     return res.status(200).json({ status: 200, errors: true, data: doc, message: "No User Found" });
+      //   else {
+      d = d.toObject();
+      delete d.password;
+      // console.log("Updated User", d);
+      res.status(200).json({ status: 200, errors: false, data: d, message: "Updated User" });
+      //   }
+      // }
+      // ).catch(e => {
+      //   console.log(e);
+      //   return res.status(500).json({ status: 500, errors: true, data: null, message: "Error while updating user details" });
+      // });
     }
-  })
+  }).populate("role route")
+  // bcrypt.genSalt(10, function (err, salt) {
+  //   bcrypt.hash(result.data.password, salt, function (err, hash) {
+  //     result.data.password = hash;
+  //     User.findByIdAndUpdate(req.user._id, { $set: result.data }, { new: true }, (err, doc) => {
+  //       if (err) {
+  //         console.log(err);
+  //         return res.status(500).json({ status: 500, errors: true, data: null, message: "Error while updating user data" });
+  //       }
+  //       else {
+  //         doc.populate("role route").execPopulate().then(d => {
+  //           if (!d)
+  //             return res.status(200).json({ status: 200, errors: true, data: doc, message: "No User Found" });
+  //           else {
+  //             d = d.toObject();
+  //             delete d.password;
+  //             // console.log("Updated User", d);
+  //             res.status(200).json({ status: 200, errors: false, data: d, message: "Updated User" });
+  //           }
+  //         }
+  //         ).catch(e => {
+  //           console.log(e);
+  //           return res.status(500).json({ status: 500, errors: true, data: null, message: "Error while updating user details" });
+  //         });
+  //       }
+  //     })
+  //   })
+  // });
 })
 
 
@@ -176,8 +247,11 @@ router.post("/", authorizePrivilege("ADD_NEW_USER"), (req, res) => {
   let result;
   if (req.body.role == process.env.DRIVER_ROLE)
     result = userCtrl.verifyAddDriver(req.body);
-  else
+  else if (req.body.role == process.env.VENDOR_ROLE) {
+    result = userCtrl.verifyVendorCreate(req.body);
+  } else {
     result = userCtrl.verifyCreate(req.body);
+  }
   if (isEmpty(result.errors)) {
     User.findOne({ email: result.data.email }, (err, doc) => {
       if (err)

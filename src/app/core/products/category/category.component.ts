@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { ProductsCategoryService } from './shared/category.service';
+import { element } from '@angular/core/src/render3/instructions';
 
 @Component({
   selector: 'app-category',
@@ -19,6 +20,7 @@ export class CategoryComponent implements OnInit {
   breadcrumArray: any[] = [];
   submitted = false;
   categoryForm: FormGroup;
+  categoryFormData: FormData = new FormData();
   subCategoryForm: FormGroup;
   editing: Boolean = false;
   currentcategory: any;
@@ -39,10 +41,13 @@ export class CategoryComponent implements OnInit {
   attributeForm: FormGroup;
   allAttributes: any[] = [];
   showAttributeFor: Boolean = false;
+  showImageForSubcategories: Boolean = false;
   categorySelectedId: any;
   specificCategoryAttributes: any[] = []
   showSpecificCategoryAttributesLength: Boolean = false;
   deleteIndex: any;
+  categoryImage: any;
+  filenameCategoryImage: string | ArrayBuffer;
   constructor(private formBuilder: FormBuilder,
     private productService: ProductsService,
     private toastr: ToastrService,
@@ -56,13 +61,6 @@ export class CategoryComponent implements OnInit {
 
   ngOnInit() {
     this.getCategory();
-  }
-
-
-  get f() { return this.categoryForm.controls; }
-
-  initDatatable() {
-    $('#example').DataTable().clear().destroy();
     this.dtOptions = {
       pagingType: 'full_numbers',
       lengthMenu: [
@@ -73,45 +71,22 @@ export class CategoryComponent implements OnInit {
       retrive: true,
       language: {
         search: '_INPUT_',
-        searchPlaceholder: 'Search Category',
+        searchPlaceholder: 'Search records',
       },
-      dom: "<'row'<'col-sm-12 col-md-5'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-4'f>>" +
-        "<'row'<'col-sm-12'tr>>" +
-        "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-      initComplete: function (settings, json) {
-        $('.button').removeClass('dt-button');
-      },
-      buttons: [
-        {
-          extend: 'copyHtml5',
-          text: '<i class="far fa-copy"></i>',
-          className: ' color ',
-          titleAttr: 'Copy'
-        },
-        {
-          extend: 'excelHtml5',
-          text: '<i class="fas fa-file-excel"></i>',
-          className: 'color ',
-          titleAttr: 'Excel'
-        },
-        {
-          extend: 'csvHtml5',
-          text: '<i class="fas fa-file-csv"></i>',
-          className: 'color',
-          titleAttr: 'CSV'
-        },
-        {
-          extend: 'print',
-          text: '<i class="fas fa-print"></i>',
-          className: 'color',
-          titleAttr: 'Print'
-        }
-      ]
     };
+  }
+
+
+  get f() { return this.categoryForm.controls; }
+
+  initDatatable() {
+    $('#example').DataTable().destroy();
+    this.dtTrigger.next();
   }
 
   submit() {
     this.submitted = true;
+    const formData = new FormData();
     if (!(this.categorySelectedId) && !(this.editing)) {
       this.categoryForm.get('type').setValue('category');
       this.categoryForm.removeControl('parent');
@@ -119,65 +94,69 @@ export class CategoryComponent implements OnInit {
       this.categoryForm.get('type').setValue('subcategory');
       this.categoryForm.get('parent').setValue(this.categorySelectedId);
     }
+    Object.keys(this.categoryForm.controls).forEach(control => {
+      this.categoryFormData.append(control, this.categoryForm.get(control).value);
+    });
     if (this.categoryForm.invalid) {
-      console.log('Invalid Form');
       return;
     }
     if (this.editing) {
-      this.updateCategory(this.categoryForm.value);
+      this.updateCategory(this.categoryFormData);
     } else {
-      this.addCategory(this.categoryForm.value);
+      this.addCategory(this.categoryFormData);
     }
   }
 
   getCategory() {
-    this.initDatatable();
+    // this.initDatatable();
     this.allCategory.length = 0;
     this.productService.getAllCategory().subscribe((res: ResponseModel) => {
+      console.log(res.data);
       this.allCategory = res.data;
+      this.showImageForSubcategories = false;
       this.categorySelectedId = undefined;
       this.dtTrigger.next();
     });
   }
 
   getAllCategory(id, name) {
-    this.initDatatable();
     this.breadcrumArray.push({ id: id, name: name });
     this.allCategory.length = 0;
     this.productsCategoryService.getAllCategorysub(id).subscribe((res: ResponseModel) => {
       if (res.errors) {
         this.toastr.error(res.message);
       } else {
-        this.toastr.info(res.data.length + ' ' + 'Categories Found')
+        this.toastr.info(res.data.length + ' ' + 'Categories Found');
+        this.showImageForSubcategories = true;
         this.allCategory = res.data;
-        this.dtTrigger.next();
+        this.initDatatable();
       }
     });
   }
 
   addCategory(category) {
-    this.categoryForm.get('type').setValue('value');
-    this.categoryForm.removeControl('parent');
     this.productService.addCategory(category).subscribe((res: ResponseModel) => {
       if (res.errors) {
         this.toastr.error('Error While Adding', 'Error');
       } else {
-        jQuery('#modal3').modal('hide');
         if (!(this.categorySelectedId) && !(this.editing)) {
           this.allCategory.push(res.data);
           this.toastr.success('Category Added!', 'Success!');
+          this.initDatatable();
         } else {
-
           this.toastr.success('Subcategory Added!', 'Success!');
         }
+        jQuery('#modal3').modal('hide');
         jQuery('#example').modal('hide');
+        this.resetForm();
       }
-      this.resetForm();
     });
   }
 
   addSubCategory(i) {
+    this.categoryFormData = new FormData();
     this.categorySelectedId = i;
+    this.categoryForm.get('name').setValue(null);
     this.categoryForm.get('parent').setValue(i);
     this.categoryForm.get('type').setValue('subcategory');
     this.editing = false;
@@ -196,7 +175,6 @@ export class CategoryComponent implements OnInit {
     if (this.viewArray.image) {
       this.showImage = true;
       this.image = this.imageUrl + this.viewArray.image;
-      console.log(this.image);
     } else {
       this.showImage = false;
     }
@@ -220,19 +198,27 @@ export class CategoryComponent implements OnInit {
       this.toastr.warning('Products Deleted!', 'Deleted!');
       this.allCategory.splice(this.deleteIndex, 1);
       this.deleteIndex = null;
+      this.initDatatable();
       jQuery('#deleteCategoryModal').modal('hide');
     }).catch((err) => console.log(err));
   }
 
   updateCategory(category) {
     const id = this.allCategory[this.currentIndex]._id;
-    this.productService.updateCategory(category, id).subscribe((res: ResponseModel) => {
-      jQuery('#modal3').modal('hide');
+    const formData = new FormData();
+    if (this.categoryImage) {
+      formData.append('image', this.categoryImage);
+      formData.append('name', this.categoryForm.get('name').value);
+    } else {
+      formData.append('name', this.categoryForm.get('name').value);
+    }
+    this.productService.updateCategory(formData, id).subscribe((res: ResponseModel) => {
       this.toastr.info('Category Updated Successfully!', 'Updated!!');
-      this.resetForm();
       this.allCategory.splice(this.currentIndex, 1, res.data);
       this.currentcategoryId = null;
       this.editing = false;
+      jQuery('#modal3').modal('hide');
+      this.resetForm();
     });
   }
 
@@ -240,7 +226,7 @@ export class CategoryComponent implements OnInit {
     this.categoryForm = this.formBuilder.group({
       name: ['', Validators.required],
       parent: [''],
-      type: ['', Validators.required],
+      type: ['', Validators.required]
     });
   }
 
@@ -260,12 +246,14 @@ export class CategoryComponent implements OnInit {
     this.categorySelectedId = null;
     this.currentcategoryId = null;
     this.currentIndex = null;
+    this.filenameCategoryImage = null;
+    this.categoryImage = null;
+    this.categoryFormData = new FormData();
     this.categoryForm.reset();
     this.initForm();
   }
 
   breadcrumFunction(i, id) {
-    this.initDatatable();
     this.breadcrumArray.splice(i);
     this.allCategory.length = 0;
     this.productsCategoryService.getAllCategorysub(id).subscribe((res: ResponseModel) => {
@@ -274,8 +262,37 @@ export class CategoryComponent implements OnInit {
       } else {
         this.toastr.info(res.data.length + ' ' + 'Categories Found')
         this.allCategory = res.data;
-        this.dtTrigger.next();
+        this.initDatatable();
       }
     });
   }
+
+  categoryImageUpload(event: any) {
+    if (event.target.files && event.target.files[0]) {
+      var reader = new FileReader();
+      reader.readAsDataURL(event.target.files[0]); // read file as data url
+      this.categoryImage = event.target.files[0];
+      reader.onload = (event) => { // called once readAsDataURL is completed
+        this.filenameCategoryImage = event.target.result;
+      }
+    }
+  }
+
+  onCategoryImageSelect(event) {
+    if (event.target.files && event.target.files[0]) {
+      this.categoryFormData.delete('image');
+      var reader = new FileReader();
+      reader.readAsDataURL(event.target.files[0]); // read file as data url
+      this.categoryImage = event.target.files[0];
+      reader.onload = (event) => { // called once readAsDataURL is completed
+        this.filenameCategoryImage = event.target.result;
+      }
+      // const filesAmount = event.target.files.length;
+      // for (let i = 0; i < filesAmount; i++) {
+      this.categoryFormData.append('image', event.target.files[0]);
+      // }
+    }
+  }
+
 }
+

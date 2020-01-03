@@ -81,6 +81,12 @@ router.delete("/:id", authorizePrivilege("DELETE_BANNER"), (req, res) => {
                 return res.status(500).json({ status: 500, data: null, errors: true, message: "Error while deleting the banner" })
             }
             if (doc) {
+                S3.deleteObject({
+                    Bucket: process.env.AWS_S3_BUCKET,
+                    Key: doc.image
+                }).promise().catch(e=>{
+                    console.log(e);
+                })
                 res.json({ status: 200, data: doc, errors: false, message: "Banner deleted successfully!" });
             }
         })

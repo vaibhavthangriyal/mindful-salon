@@ -99,29 +99,28 @@
               <table class="table table-invoice bd-b">
                 <thead>
                   <tr>
-                    <th class="wd-20p">Product</th>
-                    <th class="wd-20p">Brand</th>
-                    <th class="wd-20p">Quantity</th>
-                    <th class="wd-20p" *ngIf="!(selectedOrder.accepted) && !(selectedOrder.isCancelled)">Accepted</th>
-                    <th class="wd-20p" *ngIf="(selectedOrder.accepted) && !(selectedOrder.isCancelled)">Accepted</th>
+                    <th class="wd-20p text-center">Product</th>
+                    <th class="wd-20p text-center">Quantity</th>
+                    <th class="wd-20p text-center" *ngIf="!(selectedOrder.accepted) && !(selectedOrder.isCancelled)">Accepted</th>
+                    <th class="wd-20p text-center" *ngIf="(selectedOrder.accepted) && !(selectedOrder.isCancelled)">Accepted</th>
+                    <th class="wd-20p text-center">Price</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let product of selectedOrder.products;let i=index">
-                    <td class="tx-nowrap">{{product?.product?.name | titlecase}}</td>
-                    <td class="d-none d-sm-table-cell tx-color-03">{{product?.product?.brand?.name |titlecase}}</td>
-                    <td class="tx-nowrap">{{product.quantity | number}}</td>
-                    <td *ngIf="(selectedOrder.accepted) && !(selectedOrder.isCancelled)">{{product.accepted | number}}
-                    </td>
-                    <td *ngIf="!(selectedOrder.accepted) && !(selectedOrder.isCancelled)">
+                    <td class="tx-nowrap text-center">{{product?.product?.product?.name | titlecase}} (<span *ngFor="let option of product.product.attributes; let i = index"> {{option?.option?.value | titlecase}}</span> )</td>
+                    <td class="tx-nowrap text-center">{{product.quantity | number}}</td>
+                    <td *ngIf="(selectedOrder.accepted) && !(selectedOrder.isCancelled)" class=" text-center">{{product.accepted | number}}</td>
+                    <td *ngIf="!(selectedOrder.accepted) && !(selectedOrder.isCancelled)" class=" text-center">
                       <form [formGroup]="quantityForm">
                         <div formArrayName="products">
                           <div [formGroupName]="i">
-                            <input type="text" class="form-control" formControlName="accepted">
+                            <input type="text" class="form-control" formControlName="accepted" (change)="calculateTotalAmount()">
                           </div>
                         </div>
                       </form>
                     </td>
+                    <td class=" text-center">{{(product?.product?.price) * (quantityFormGetter.controls[i].get('accepted').value) | number}}</td>
                   </tr>
                 </tbody>
               </table>
@@ -135,7 +134,8 @@
                 <ul class="list-unstyled lh-7 pd-r-10">
                   <li class="d-flex justify-content-between">
                     <h5><b>Total Due</b></h5>
-                    <h5><b>₹{{selectedOrder?.amount}}</b></h5>
+                    <h5 *ngIf="(selectedOrder.accepted) && !(selectedOrder.isCancelled)"><b>₹{{selectedOrder?.amount}}</b></h5>
+                    <h5 *ngIf="!(selectedOrder.accepted) && !(selectedOrder.isCancelled)"><b>₹{{calculateTotalAmount()}}</b></h5>
                   </li>
                 </ul>
               </div>

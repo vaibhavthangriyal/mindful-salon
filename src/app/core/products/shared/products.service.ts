@@ -10,8 +10,11 @@ export class ProductsService {
     'Content-Type': 'application/json',
     'token': this.tokenService.getToken()
   });
-
-  url = '/api/product/products';
+  headersFormData = new HttpHeaders({
+    // 'Content-Type': 'application/json',
+    'token': this.tokenService.getToken()
+  });
+  productURL = '/api/product/products';
   url2 = '/api/product/pcategory';
   url3 = '/api/product/brand';
   url4 = '/api/product/user/hub';
@@ -19,27 +22,28 @@ export class ProductsService {
   url6 = 'api/product/upload/category';
   url7 = 'api/product/upload/product';
   url8 = 'api/product/pcattribute';
+  productVarientURL = 'api/product/pvarients';
   subCategoryURL = 'api/product/pcategory';
   constructor(private http: HttpClient, private tokenService: TokenStorage) { }
 
   getAllProduct() {
-    return this.http.get(this.url + '/all', { headers: this.headers });
+    return this.http.get(this.productURL + '/all', { headers: this.headers });
   }
 
   addProduct(product) {
-    return this.http.post(this.url + '/', product, { headers: this.headers });
+    return this.http.post(this.productURL + '/', product, { headers: this.headersFormData });
   }
 
   deleteProduct(id) {
-    return this.http.delete(this.url + '/' + id, { headers: this.headers });
+    return this.http.delete(this.productURL + '/' + id, { headers: this.headers });
   }
 
   updateProduct(product, id) {
-    return this.http.put(this.url + '/id/' + id, product, { headers: this.headers });
+    return this.http.put(this.productURL + '/id/' + id, product, { headers: this.headersFormData });
   }
 
   importCustomer(csv) {
-    return this.http.post(this.url + '/import', csv);
+    return this.http.post(this.productURL + '/import', csv);
   }
 
   getAllCategory() {
@@ -47,7 +51,7 @@ export class ProductsService {
   }
 
   addCategory(category) {
-    return this.http.post(this.url2 + '/', category, { headers: this.headers });
+    return this.http.post(this.url2 + '/', category, { headers: this.headersFormData });
   }
 
   deleteCategory(id) {
@@ -55,7 +59,7 @@ export class ProductsService {
   }
 
   updateCategory(category, id) {
-    return this.http.put(this.url2 + '/' + id, category, { headers: this.headers });
+    return this.http.put(this.url2 + '/' + id, category, { headers: this.headersFormData });
   }
   // Brand API
   getAllBrand() {
@@ -63,7 +67,7 @@ export class ProductsService {
   }
 
   addBrand(brand) {
-    return this.http.post(this.url3 + '/', brand, { headers: this.headers });
+    return this.http.post(this.url3 + '/', brand, { headers: this.headersFormData });
   }
 
   deleteBrand(id) {
@@ -71,7 +75,7 @@ export class ProductsService {
   }
 
   updateBrand(brand, id) {
-    return this.http.put(this.url3 + '/' + id, brand, { headers: this.headers });
+    return this.http.put(this.url3 + '/' + id, brand, { headers: this.headersFormData });
   }
 
   // Hub User
@@ -111,21 +115,21 @@ export class ProductsService {
     });
   }
 
-  // Product Image Upload
-
-  getUrlProduct() {
-    return this.http.get(this.url7 + '/', { headers: this.headers });
-  }
-
-  sendUrlProduct(url, file) {
-    return fetch(url, {
-      method: 'PUT',
-      body: file,
-      headers: {
-        'Content-Type': 'jpeg,png'
-      }
+  // UPLOAD VARIENT IMAGES
+  uploadVarientImages(productId, images) {
+    return this.http.put(this.productVarientURL + '/images/' + productId, images, {
+      headers: new HttpHeaders({
+        'token': this.tokenService.getToken()
+      })
     });
   }
+
+
+  // UPLOAD PRODUCT IMAGES
+  uploadProductImages(productId, images) {
+    return this.http.put(this.productURL + '/images/' + productId, images, { headers: this.headersFormData });
+  }
+
 
   // Attribute Api
   getAllAttributeSpecificCategory(id) {
@@ -146,10 +150,10 @@ export class ProductsService {
 
   // UPDATE STOCK
   updateProductStock(data) {
-    return this.http.put(this.url + '/stock', data, { headers: this.headers });
+    return this.http.put(this.productURL + '/stock', data, { headers: this.headers });
   }
 
-  
+
   getAllCategorysub(id) {
     return this.http.get(this.subCategoryURL + '/id/' + id, { headers: this.headers });
   }

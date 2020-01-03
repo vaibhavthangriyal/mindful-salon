@@ -22,4 +22,4 @@ if (config.MONGOOSE_DEBUG) {
     debug(`${collectionName}.${method}`, util.inspect(query, false, 20), doc);
   });
 }
-
+module.exports = mongoose;

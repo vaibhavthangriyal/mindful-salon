@@ -78,59 +78,37 @@ export class UserroleComponent implements OnInit {
 
   AddUserRole(userrole) {
     if (userrole.isAdmin === true) {
-      userrole.privileges.ADD_NEW_CHALLAN = true;
-      userrole.privileges.ADD_NEW_DRIVER = true;
-      userrole.privileges.ADD_NEW_ORDER = true;
-      userrole.privileges.ADD_NEW_PRODUCT = true;
-      userrole.privileges.ADD_NEW_RETURN_ORDER = true;
-      userrole.privileges.ADD_NEW_USER = true;
-      userrole.privileges.ADD_NEW_VEHICLE = true;
-      userrole.privileges.DELETE_CHALLAN = true;
-      userrole.privileges.DELETE_DRIVER = true;
-      userrole.privileges.DELETE_ORDER = true;
-      userrole.privileges.DELETE_PRODUCT = true;
-      userrole.privileges.DELETE_RETURN_ORDER = true;
-      userrole.privileges.DELETE_USER = true;
-      userrole.privileges.DELETE_VEHICLE = true;
-      userrole.privileges.GET_ALL_CHALLAN = true;
-      userrole.privileges.GET_ALL_DRIVERS = true;
-      userrole.privileges.GET_ALL_ORDERS = true;
-      userrole.privileges.GET_ALL_PRODUCTS = true;
-      userrole.privileges.GET_ALL_RETURN_ORDERS = true;
-      userrole.privileges.GET_ALL_USERS = true;
-      userrole.privileges.GET_ALL_VEHICLES = true;
-      userrole.privileges.GET_CHALLAN = true;
-      userrole.privileges.GET_ORDER = true;
-      userrole.privileges.GET_PRODUCT = true;
-      userrole.privileges.GET_RETURN_ORDER = true;
-      userrole.privileges.GET_USER_BY_ROLE = true;
-      userrole.privileges.UPDATE_DRIVER = true;
-      userrole.privileges.UPDATE_PRODUCT = true;
-      userrole.privileges.UPDATE_USER = true;
-      userrole.privileges.UPDATE_VEHICLE = true;
-      userrole.privileges.GET_ALL_EVENTS = true;
-      userrole.privileges.ADD_NEW_EVENT = true;
-      userrole.privileges.CANCEL_EVENT = true;
-      userrole.privileges.UPDATE_EVENT = true;
-      userrole.privileges.DELETE_EVENT = true;
-      userrole.privileges.GET_ALL_EVENT_LEADS = true;
-      userrole.privileges.ADD_NEW_EVENT_LEAD = true;
-      userrole.privileges.GET_ALL_EVENT_TYPES = true;
-      userrole.privileges.ADD_NEW_EVENT_TYPE = true;
-      userrole.privileges.UPDATE_EVENT_TYPE = true;
-      userrole.privileges.DELETE_EVENT_TYPE = true;
-      userrole.privileges.GET_ALL_EVENT_ORGANIZERS = true;
-      userrole.privileges.ADD_NEW_EVENT_ORGANIZER = true;
-      userrole.privileges.UPDATE_EVENT_ORGANIZER = true;
-      userrole.privileges.DELETE_EVENT_ORGANIZER = true;
-      userrole.privileges.GET_ALL_EVENT_LEAD_SOURCES = true;
-      userrole.privileges.ADD_NEW_EVENT_LEAD_SOURCES = true;
-      userrole.privileges.UPDATE_EVENT_LEAD_SOURCES = true;
-      userrole.privileges.DELETE_EVENT_LEAD_SOURCES = true;
-      userrole.privileges.GET_ALL_EVENT_MODES = true;
-      userrole.privileges.ADD_NEW_EVENT_MODES = true;
-      userrole.privileges.UPDATE_EVENT_MODES = true;
-      userrole.privileges.DELETE_EVENT_MODES = true;
+      // USERS
+      userrole.privileges.GET_ALL_USERS = true,
+        userrole.privileges.ADD_NEW_USER = true,
+        userrole.privileges.DELETE_USER = true,
+        userrole.privileges.UPDATE_USER = true,
+        userrole.privileges.GET_USER_BY_ROLE = true,
+        userrole.privileges.ADD_NEW_USER = true,
+        userrole.privileges.DELETE_USER = true,
+        userrole.privileges.UPDATE_USER = true,
+        userrole.privileges.GET_ALL_PRODUCTS = true,
+        userrole.privileges.GET_PRODUCT = true,
+        userrole.privileges.ADD_NEW_PRODUCT = true,
+        userrole.privileges.DELETE_PRODUCT = true,
+        userrole.privileges.UPDATE_PRODUCT = true,
+        userrole.privileges.GET_ALL_ORDERS = true,
+        userrole.privileges.GET_ORDER = true,
+        userrole.privileges.ADD_NEW_ORDER = true,
+        userrole.privileges.DELETE_ORDER = true,
+        userrole.privileges.GET_ALL_PRODUCT_CATEGORY = true,
+        userrole.privileges.GET_PRODUCT_CATEGORY = true,
+        userrole.privileges.ADD_NEW_PRODUCT_CATEGORY = true,
+        userrole.privileges.UPDATE_PRODUCT_CATEGORY = true,
+        userrole.privileges.DELETE_PRODUCT_CATEGORY = true,
+        userrole.privileges.GET_ALL_BRANDS = true,
+        userrole.privileges.DELETE_BRAND = true,
+        userrole.privileges.UPDATE_BRAND = true,
+        userrole.privileges.ADD_NEW_BRAND = true,
+        userrole.privileges.GET_ALL_CUSTOMERS = true,
+        userrole.privileges.UPDATE_CUSTOMER = true,
+        userrole.privileges.ADD_NEW_CUSTOMER = true,
+        userrole.privileges.DELETE_CUSTOMER = true
     }
     delete userrole.isAdmin;
     console.log(userrole);
@@ -205,50 +183,7 @@ export class UserroleComponent implements OnInit {
         GET_ALL_CUSTOMERS: [false],
         UPDATE_CUSTOMER: [false],
         ADD_NEW_CUSTOMER: [false],
-        DELETE_CUSTOMER: [false],
-        // GET_ALL_RETURN_ORDERS: [false],
-        // GET_RETURN_ORDER: [false],
-        // ADD_NEW_RETURN_ORDER: [false],
-        // DELETE_RETURN_ORDER: [false],
-        // GET_ALL_CHALLAN: [false],
-        // GET_CHALLAN: [false],
-        // ADD_NEW_CHALLAN: [false],
-        // DELETE_CHALLAN: [false],
-        // GET_ALL_VEHICLES: [false],
-        // DELETE_VEHICLE: [false],
-        // UPDATE_VEHICLE: [false],
-        // ADD_NEW_VEHICLE: [false],
-        // GET_ALL_DRIVERS: [false],
-        // DELETE_DRIVER: [false],
-        // UPDATE_DRIVER: [false],
-        // ADD_NEW_DRIVER: [false],
-        // GET_ALL_EVENTS: [false],
-        // ADD_NEW_EVENT: [false],
-        // CANCEL_EVENT: [false],
-        // UPDATE_EVENT: [false],
-        // DELETE_EVENT: [false],
-        // GET_ALL_EVENT_LEADS: [false],
-        // ADD_NEW_EVENT_LEAD: [false],
-        // GET_ALL_EVENT_TYPES: [false],
-        // ADD_NEW_EVENT_TYPE: [false],
-        // UPDATE_EVENT_TYPE: [false],
-        // DELETE_EVENT_TYPE: [false],
-        // GET_ALL_EVENT_ORGANIZERS: [false],
-        // ADD_NEW_EVENT_ORGANIZER: [false],
-        // UPDATE_EVENT_ORGANIZER: [false],
-        // DELETE_EVENT_ORGANIZER: [false],
-        // GET_ALL_EVENT_LEAD_SOURCES: [false],
-        // ADD_NEW_EVENT_LEAD_SOURCES: [false],
-        // UPDATE_EVENT_LEAD_SOURCES: [false],
-        // DELETE_EVENT_LEAD_SOURCES: [false],
-        // GET_ALL_EVENT_MODES: [false],
-        // ADD_NEW_EVENT_MODES: [false],
-        // UPDATE_EVENT_MODES: [false],
-        // DELETE_EVENT_MODES: [false],
-        // GET_ALL_MARKETING_MATERIALS: [false],
-        // ADD_NEW_MARKETING_MATERIAL: [false],
-        // UPDATE_MARKETING_MATERIAL: [false],
-        // DELETE_MARKETING_MATERIAL: [false],
+        DELETE_CUSTOMER: [false]
       })
     });
   }
@@ -309,42 +244,6 @@ export class UserroleComponent implements OnInit {
     this.userRoleForm.controls['privileges'].get('ADD_NEW_PRODUCT_CATEGORY').setValue(user.privileges.ADD_NEW_PRODUCT_CATEGORY);
     this.userRoleForm.controls['privileges'].get('UPDATE_PRODUCT_CATEGORY').setValue(user.privileges.UPDATE_PRODUCT_CATEGORY);
     this.userRoleForm.controls['privileges'].get('DELETE_PRODUCT_CATEGORY').setValue(user.privileges.DELETE_PRODUCT_CATEGORY);
-    // this.userRoleForm.controls['privileges'].get('GET_ALL_RETURN_ORDERS').setValue(user.privileges.GET_ALL_RETURN_ORDERS);
-    // this.userRoleForm.controls['privileges'].get('GET_RETURN_ORDER').setValue(user.privileges.GET_RETURN_ORDER);
-    // this.userRoleForm.controls['privileges'].get('ADD_NEW_RETURN_ORDER').setValue(user.privileges.ADD_NEW_RETURN_ORDER);
-    // this.userRoleForm.controls['privileges'].get('DELETE_RETURN_ORDER').setValue(user.privileges.DELETE_RETURN_ORDER);
-    // this.userRoleForm.controls['privileges'].get('GET_ALL_CHALLAN').setValue(user.privileges.GET_ALL_CHALLAN);
-    // this.userRoleForm.controls['privileges'].get('GET_CHALLAN').setValue(user.privileges.GET_CHALLAN);
-    // this.userRoleForm.controls['privileges'].get('ADD_NEW_CHALLAN').setValue(user.privileges.ADD_NEW_CHALLAN);
-    // this.userRoleForm.controls['privileges'].get('DELETE_CHALLAN').setValue(user.privileges.DELETE_CHALLAN);
-    // this.userRoleForm.controls['privileges'].get('GET_ALL_EVENTS').setValue(user.privileges.GET_ALL_EVENTS);
-    // this.userRoleForm.controls['privileges'].get('ADD_NEW_EVENT').setValue(user.privileges.ADD_NEW_EVENT);
-    // this.userRoleForm.controls['privileges'].get('CANCEL_EVENT').setValue(user.privileges.CANCEL_EVENT);
-    // this.userRoleForm.controls['privileges'].get('UPDATE_EVENT').setValue(user.privileges.UPDATE_EVENT);
-    // this.userRoleForm.controls['privileges'].get('DELETE_EVENT').setValue(user.privileges.DELETE_EVENT);
-    // this.userRoleForm.controls['privileges'].get('GET_ALL_EVENT_LEADS').setValue(user.privileges.GET_ALL_EVENT_LEADS);
-    // this.userRoleForm.controls['privileges'].get('ADD_NEW_EVENT_LEAD').setValue(user.privileges.ADD_NEW_EVENT_LEAD);
-    // this.userRoleForm.controls['privileges'].get('GET_ALL_EVENT_TYPES').setValue(user.privileges.GET_ALL_EVENT_TYPES);
-    // this.userRoleForm.controls['privileges'].get('ADD_NEW_EVENT_TYPE').setValue(user.privileges.ADD_NEW_EVENT_TYPE);
-    // this.userRoleForm.controls['privileges'].get('UPDATE_EVENT_TYPE').setValue(user.privileges.UPDATE_EVENT_TYPE);
-    // this.userRoleForm.controls['privileges'].get('DELETE_EVENT_TYPE').setValue(user.privileges.DELETE_EVENT_TYPE);
-    // this.userRoleForm.controls['privileges'].get('GET_ALL_EVENT_ORGANIZERS').setValue(user.privileges.GET_ALL_EVENT_ORGANIZERS);
-    // this.userRoleForm.controls['privileges'].get('ADD_NEW_EVENT_ORGANIZER').setValue(user.privileges.ADD_NEW_EVENT_ORGANIZER);
-    // this.userRoleForm.controls['privileges'].get('UPDATE_EVENT_ORGANIZER').setValue(user.privileges.UPDATE_EVENT_ORGANIZER);
-    // this.userRoleForm.controls['privileges'].get('DELETE_EVENT_ORGANIZER').setValue(user.privileges.DELETE_EVENT_ORGANIZER);
-    // this.userRoleForm.controls['privileges'].get('GET_ALL_MARKETING_MATERIALS').setValue(user.privileges.GET_ALL_MARKETING_MATERIALS);
-    // this.userRoleForm.controls['privileges'].get('ADD_NEW_MARKETING_MATERIAL').setValue(user.privileges.ADD_NEW_MARKETING_MATERIAL);
-    // this.userRoleForm.controls['privileges'].get('UPDATE_MARKETING_MATERIAL').setValue(user.privileges.UPDATE_MARKETING_MATERIAL);
-    // this.userRoleForm.controls['privileges'].get('DELETE_MARKETING_MATERIAL').setValue(user.privileges.DELETE_MARKETING_MATERIAL);
-    // this.userRoleForm.controls['privileges'].get('GET_ALL_EVENT_LEAD_SOURCES').setValue(user.privileges.GET_ALL_EVENT_LEAD_SOURCES);
-    // this.userRoleForm.controls['privileges'].get('ADD_NEW_EVENT_LEAD_SOURCES').setValue(user.privileges.ADD_NEW_EVENT_LEAD_SOURCES);
-    // this.userRoleForm.controls['privileges'].get('UPDATE_EVENT_LEAD_SOURCES').setValue(user.privileges.UPDATE_EVENT_LEAD_SOURCES);
-    // this.userRoleForm.controls['privileges'].get('DELETE_EVENT_LEAD_SOURCES').setValue(user.privileges.DELETE_EVENT_LEAD_SOURCES);
-    // this.userRoleForm.controls['privileges'].get('GET_ALL_EVENT_MODES').setValue(user.privileges.GET_ALL_EVENT_MODES);
-    // this.userRoleForm.controls['privileges'].get('ADD_NEW_EVENT_MODES').setValue(user.privileges.ADD_NEW_EVENT_MODES);
-    // this.userRoleForm.controls['privileges'].get('UPDATE_EVENT_MODES').setValue(user.privileges.UPDATE_EVENT_MODES);
-    // this.userRoleForm.controls['privileges'].get('DELETE_EVENT_MODES').setValue(user.privileges.DELETE_EVENT_MODES);
   }
-
 
 }

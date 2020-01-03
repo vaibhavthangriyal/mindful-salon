@@ -28,7 +28,7 @@ router.get("/", authorizePrivilege("GET_CART"), (req, res) => {
             return res.status(500).json({ status: 500, data: null, errors: true, message: "Error while aggregate" })
         }
         if (doc) {
-            Cart.populate(doc, { path: "products.product", populate: { path: "category created_by available_for brand", select: "-password" } }, (err, doc) => {
+            Cart.populate(doc, [{ path: "products.product", populate: { path: "product attributes.option attributes.attribute", populate: { path: "category brand" } } }], (err, doc) => {
                 if (err) {
                     console.log(err);
                     res.status(500).json({ status: 500, data: null, errors: true, message: "Error while getting cart" })
@@ -86,7 +86,7 @@ router.post("/", authorizePrivilege("ADD_PRODUCT_TO_CART"), (req, res) => {
                 return res.status(500).json({ status: 500, data: null, errors: true, message: "Error while aggregate" })
             }
             if (doc) {
-                Cart.populate(doc, { path: "products.product", populate: { path: "category created_by brand available_for", select: "-password" } }, (err, doc) => {
+                Cart.populate(doc, [{ path: "products.product", populate: { path: "product attributes.option attributes.attribute", populate: { path: "category brand" } } }], (err, doc) => {
                     if (err) {
                         console.log(err);
                         res.status(500).json({ status: 500, data: null, errors: true, message: "Error while getting cart" })
@@ -229,7 +229,12 @@ router.post("/placeorder", authorizePrivilege("PLACE_ORDER"), (req, res) => {
                         order.status = "Placed";
                         let newOrder = new CustomerOrder(order);
                         newOrder.save().then(order => {
-                            CustomerOrder.findById(order._id).populate([{ path: "placed_by products.product", populate: { path: "created_by available_for brand category", select: "-password" } }]).exec().then(d => {
+                            CustomerOrder.findById(order._id).populate([{
+                                path: "products.product",
+                                populate: {
+                                    path: "product attributes.attribute attributes.option"
+                                }
+                            }]).exec().then(d => {
                                 cart.delete();
                                 return res.json({ status: 200, data: d, errors: false, message: "Order placed successfully" });
                             })

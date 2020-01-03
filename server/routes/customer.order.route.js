@@ -12,12 +12,12 @@ const router = express.Router();
 //GET all orders placed by self
 router.get("/", authorizePrivilege("GET_ALL_CUSTOMER_ORDERS_OWN"), (req, res) => {
     CustomerOrder.find({ $or: [{ placed_by: req.user._id }, { placed_to: req.user._id }] })
-        .sort('order_date', 1)
-        .populate("placed_by placed_to")
+        .sort({'order_date': -1})
+        // .populate(" placed_to")
         .populate({
-            path: "products.product ",
+            path: "products.product",
             populate: {
-                path: "created_by category brand available_for", select: "-password"
+                path: "product attributes.attribute attributes.option category brand"
             }
         })
         .exec().then(doc => {
@@ -26,13 +26,14 @@ router.get("/", authorizePrivilege("GET_ALL_CUSTOMER_ORDERS_OWN"), (req, res) =>
             return res.status(500).json({ status: 500, data: null, errors: true, message: "Error while getting orders" })
         });
 })
+
 //GET all orders placed by a specific User
 router.get("/customer/:id", authorizePrivilege("GET_ALL_CUSTOMER_ORDERS"), (req, res) => {
     CustomerOrder.find({ placed_by: req.params.id }).populate("placed_by placed_to")
         .populate({
-            path: "products.product ",
+            path: "products.product",
             populate: {
-                path: "created_by category brand available_for", select: "-password"
+                path: "product attributes.attribute attributes.option"
             }
         })
         .exec().then(doc => {
@@ -51,7 +52,7 @@ router.get("/all", authorizePrivilege("GET_ALL_CUSTOMER_ORDERS"), (req, res) => 
         .populate({
             path: "products.product",
             populate: {
-                path: "created_by category brand available_for", select: "-password"
+                path: "product attributes.attribute attributes.option category brand"
             }
         }).exec().then(doc => {
             return res.json({ status: 200, data: doc, errors: false, message: "All Orders" });

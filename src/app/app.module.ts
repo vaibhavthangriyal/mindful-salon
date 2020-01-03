@@ -35,6 +35,13 @@ import { SubscriptionModule } from './core/customersubscription/subscription.mod
 import { EventModule } from './core/event/event.module';
 import { EventSesrvice } from './event.service';
 import { FullCalendarModule } from '@fullcalendar/angular';
+import { VendorComponent } from './core/vendor/vendor.component';
+import { VendorRoutingModule } from './core/vendor/shared/vendor.routing';
+import { SettingsComponent } from './core/settings/settings.component';
+import { NgxGalleryModule } from 'ngx-gallery';
+import { CalllogComponent } from './core/vendor/calllog/calllog.component';
+import { BannerComponent } from './core/banner/banner.component';
+import { BannerModule } from './core/banner/banner.module';
 
 @NgModule({
   declarations: [
@@ -43,6 +50,10 @@ import { FullCalendarModule } from '@fullcalendar/angular';
     HomeComponent,
     MaintainanceComponent,
     CoreComponent,
+    VendorComponent,
+    SettingsComponent,
+    CalllogComponent,
+    // BannerComponent,
   ],
   imports: [
     BrowserModule,
@@ -68,7 +79,12 @@ import { FullCalendarModule } from '@fullcalendar/angular';
     RouteModule,
     SubscriptionModule,
     EventModule,
-    FullCalendarModule
+    FullCalendarModule,
+
+    NgxGalleryModule,
+
+    VendorRoutingModule,
+    BannerModule
   ],
   providers: [
     LoginAuthGraud,
@@ -76,14 +92,14 @@ import { FullCalendarModule } from '@fullcalendar/angular';
     ToastrService,
     EventSesrvice,
     {
-    provide: HTTP_INTERCEPTORS,
-    useClass: AuthHeaderInterceptor,
-    multi: true,
-  }, {
-    provide: HTTP_INTERCEPTORS,
-    useClass: CatchErrorInterceptor,
-    multi: true,
-  }],
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthHeaderInterceptor,
+      multi: true,
+    }, {
+      provide: HTTP_INTERCEPTORS,
+      useClass: CatchErrorInterceptor,
+      multi: true,
+    }],
   entryComponents: [],
   bootstrap: [AppComponent]
 })
