@@ -4,11 +4,11 @@
       <div class="card-content">
         <div class="row">
           <div class="col-md-4 col-lg-4 ">
-            <img *ngIf="(me?.profile_picture == '' )" alt="User Pic"
-              src="https://binsar.s3.ap-south-1.amazonaws.com/default-images/profile-picture.png" height="300px"
+            <img *ngIf="(me?.profile_picture)" alt="User Pic"
+              src="https://binsar.s3.ap-south-1.amazonaws.com//{{me?.profile_picture}}" height="300px"
               width="300px">
-            <img *ngIf="(me?.profile_picture != '')" alt="User Pic"
-              src="https://binsar.s3.ap-south-1.amazonaws.com/{{me?.profile_picture}}" height="300px" width="300px">
+            <!-- <img *ngIf="(me?.profile_picture != '')" alt="User Pic"
+              src="https://binsar.s3.ap-south-1.amazonaws.com/{{me?.profile_picture}}" height="300px" width="300px"> -->
             <!-- <img *ngIf="!(me?.profile_picture == '')" alt="User Pic"
               src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{me?.profile_picture}}" height="300px"
               width="300px"> -->
