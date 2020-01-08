@@ -2,7 +2,6 @@ const Joi = require('joi');
 const helper = require('../../utils/helper');
 
 const newProductSchema = Joi.object({
-    image: Joi.string().optional().allow(''),
     name: Joi.string().required(),
     category: Joi.string().required(),
     is_active: Joi.boolean().required(),

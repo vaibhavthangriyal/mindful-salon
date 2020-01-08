@@ -158,7 +158,6 @@ router.put("/id/:id", authorizePrivilege("UPDATE_PRODUCT"), (req, res) => {
     }
 })
 
-
 //GET products for pagination
 router.get("/page/:page?", authorizePrivilege("GET_ALL_PRODUCTS"), (req, res) => {
     let page = req.params.page || 0;

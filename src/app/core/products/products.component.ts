@@ -460,24 +460,6 @@ export class ProductsComponent implements OnInit {
   }
   // ************************** SUBMIT FUNCTIONS *****************************
   submit() {
-    this.productForm.get('type').setValue(this.productType);
-    this.submitted = true;
-    if (!this.productForm.get('image').value) {
-      this.productForm.removeControl('image');
-    }
-    Object.keys(this.productForm.controls).forEach(control => {
-      this.productFormData.append(control, this.productForm.get(control).value);
-    });
-    if (this.productForm.invalid) {
-      this.toastr.error('Invalid Form', 'Error');
-      return;
-    } else {
-      if (this.editing) {
-        this.updateProduct(this.productFormData);
-      } else {
-        this.addProduct(this.productFormData);
-      }
-    }
   }
 
   saveVarient() {

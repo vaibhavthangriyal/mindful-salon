@@ -31,7 +31,7 @@ if (error) {
 }
 const config = {
   env: envVars.NODE_ENV,
-  port: process.env.PORT || 5000,
+  port: process.env.PORT || 3000 || 5000,
   mongooseDebug: envVars.MONGOOSE_DEBUG,
   jwtSecret: envVars.JWT_SECRET || process.env.JWT_SECRET,
   frontend: envVars.MEAN_FRONTEND || 'angular',

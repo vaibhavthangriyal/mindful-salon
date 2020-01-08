@@ -26,7 +26,7 @@ router.get('/', authorizePrivilege("GET_ALL_USERS"), async (req, res) => {
     try {
         const allUsers = await User
             .find()
-            .populate("role ")
+            .populate({ path: "role", select: "name" })
             .exec();
         // console.log(allUsers);
         return res.json({ status: 200, message: "ALL VENDORS", errors: false, data: allUsers });

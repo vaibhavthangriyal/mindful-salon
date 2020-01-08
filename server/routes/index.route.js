@@ -75,7 +75,7 @@ router.use('/product', validateEnv, authMiddleware, productRoute);
 // router.use('/brand', validateEnv, authMiddleware, brandRoutes);
 
 // VEndor APIs
-router.use('/vendor', vendorRoutes);
+router.use('/vendor', validateEnv, authMiddleware, vendorRoutes);
 router.use('/calllog', validateEnv, authMiddleware, callLogRoutes);
 router.use('/review', validateEnv, authMiddleware, reviewRoutes);
 
