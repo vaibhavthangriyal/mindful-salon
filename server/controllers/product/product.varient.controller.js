@@ -37,4 +37,3 @@ module.exports = {
 
 function verifyCreate(area) { return helper.validator(area, productVarientCreateSchema) }
 function verifyUpdate(area) { return helper.validator(area, productVarientUpdateSchema) }
-

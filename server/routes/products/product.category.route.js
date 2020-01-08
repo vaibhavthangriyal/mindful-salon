@@ -4,6 +4,7 @@ const ProductCategory = require('../../models/products/product.category.model');
 const ProductCategoryController = require('../../controllers/product/product.category.controller');
 const isEmpty = require('../../utils/is-empty');
 const mongodb = require('mongoose').Types;
+const { upload, S3Upload } = require('../../utils/image-upload');
 const authorizePrivilege = require("../../middleware/authorizationMiddleware");
 
 router.get("/id/:id", authorizePrivilege("GET_PRODUCT_CATEGORY"), (req, res) => {
@@ -74,7 +75,7 @@ router.get("/all", authorizePrivilege("GET_ALL_PRODUCT_CATEGORY"), (req, res) =>
 })
 
 // ADD NEW PRODUCT CATEGORY
-router.post('/', authorizePrivilege("ADD_NEW_PRODUCT_CATEGORY"), async (req, res) => {
+router.post('/', authorizePrivilege("ADD_NEW_PRODUCT_CATEGORY"), upload.single("image"), async (req, res) => {
     let result
     console.log(req.body)
     if (req.body.type === 'category') {
@@ -86,14 +87,21 @@ router.post('/', authorizePrivilege("ADD_NEW_PRODUCT_CATEGORY"), async (req, res
         return res.status(400).json({ status: 400, data: null, errors: result.errors, message: "Fields Required" });
     }
     let newProductCategory = new ProductCategory(result.data);
+    if (req.file) {
+        try {
+            newProductCategory.image = await S3Upload("product-category/" + newProductCategory._id, req.file);
+        } catch (err) {
+            console.log("Error while uploading image : ", err);
+        }
+    }
     newProductCategory
         .save()
         .then(product => {
             product.populate("parent parent.parent")
-            .execPopulate()
-            .then(_d => {
-                res.json({ status: 200, data: _d, errors: false, message: "Category added successfully" })
-            })
+                .execPopulate()
+                .then(_d => {
+                    res.json({ status: 200, data: _d, errors: false, message: "Category added successfully" })
+                })
         })
         .catch(err => {
             console.log(err);
@@ -102,11 +110,18 @@ router.post('/', authorizePrivilege("ADD_NEW_PRODUCT_CATEGORY"), async (req, res
 });
 
 //UPDATE A PRODUCT
-router.put("/:id", authorizePrivilege("UPDATE_PRODUCT_CATEGORY"), (req, res) => {
+router.put("/:id", authorizePrivilege("UPDATE_PRODUCT_CATEGORY"), upload.single("image"), async (req, res) => {
     if (mongodb.ObjectId.isValid(req.params.id)) {
         let result = ProductCategoryController.verifyUpdate(req.body);
         if (!isEmpty(result.errors)) {
             return res.status(400).json({ status: 400, data: null, errors: result.errors, message: "Fields Required" });
+        }
+        if (req.file) {
+            try {
+                result.data.image = await S3Upload("product-category/" + req.params.id, req.file);
+            } catch (err) {
+                console.log("Error while uploading image : ", err);
+            }
         }
         ProductCategory.findByIdAndUpdate(req.params.id, result.data, { new: true }, (err, doc) => {
             if (err)

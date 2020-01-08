@@ -30,9 +30,9 @@ const userUpdateSchema = Joi.object({
   profile_picture: Joi.string().optional(),
   latitude: Joi.string().optional(),
   longitutde: Joi.string().optional(),
-  landmark: Joi.string().optional(),
-  street_address: Joi.string().optional(),
-  city: Joi.string().optional()
+  landmark: Joi.string().optional().allow(''),
+  street_address: Joi.string().optional().allow(''),
+  city: Joi.string().optional().allow('')
 })
 const vendorCreateSchema = Joi.object({
   landmark: Joi.string().optional().allow(''),

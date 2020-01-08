@@ -16,11 +16,12 @@ const UserSchema = new mongoose.Schema({
     match: [/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/, 'Please enter a valid email'],
   },
   mobile_number: { type: String },
+  gender: { type: String },
   is_active: { type: Boolean, default: false },
   password: {
     type: String, // required: true
   },
-  profile_picture: { type: String, lowercase: true, trim: true },
+  profile_picture: { type: String, trim: true },
   description: { type: String, lowercase: true, trim: true },
   landmark: { type: String },
   street_address: { type: String },

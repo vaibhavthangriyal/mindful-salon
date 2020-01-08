@@ -12,17 +12,14 @@ const S3 = new AWS.S3({
 });
 // Get all banners
 router.get("/", authorizePrivilege("GET_ALL_BANNERS"), (req, res) => {
-    Banner
-        .find()
-        .exec()
-        .then(docs => {
-            if (docs.length > 0)
-                res.json({ status: 200, data: docs, errors: false, message: "All banners" });
-            else
-                res.json({ status: 200, data: docs, errors: true, message: "No banner found" });
-        }).catch(err => {
-            res.status(500).json({ status: 500, data: null, errors: true, message: "Error while getting banners" })
-        })
+    Banner.find().exec().then(docs => {
+        if (docs.length > 0)
+            res.json({ status: 200, data: docs, errors: false, message: "All banners" });
+        else
+            res.json({ status: 200, data: docs, errors: true, message: "No banner found" });
+    }).catch(err => {
+        res.status(500).json({ status: 500, data: null, errors: true, message: "Error while getting banners" })
+    })
 })
 
 //Add new area
@@ -84,6 +81,12 @@ router.delete("/:id", authorizePrivilege("DELETE_BANNER"), (req, res) => {
                 return res.status(500).json({ status: 500, data: null, errors: true, message: "Error while deleting the banner" })
             }
             if (doc) {
+                S3.deleteObject({
+                    Bucket: process.env.AWS_S3_BUCKET,
+                    Key: doc.image
+                }).promise().catch(e=>{
+                    console.log(e);
+                })
                 res.json({ status: 200, data: doc, errors: false, message: "Banner deleted successfully!" });
             }
         })

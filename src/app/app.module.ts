@@ -40,6 +40,8 @@ import { VendorRoutingModule } from './core/vendor/shared/vendor.routing';
 import { SettingsComponent } from './core/settings/settings.component';
 import { NgxGalleryModule } from 'ngx-gallery';
 import { CalllogComponent } from './core/vendor/calllog/calllog.component';
+import { BannerComponent } from './core/banner/banner.component';
+import { BannerModule } from './core/banner/banner.module';
 
 @NgModule({
   declarations: [
@@ -51,6 +53,7 @@ import { CalllogComponent } from './core/vendor/calllog/calllog.component';
     VendorComponent,
     SettingsComponent,
     CalllogComponent,
+    // BannerComponent,
   ],
   imports: [
     BrowserModule,
@@ -80,7 +83,8 @@ import { CalllogComponent } from './core/vendor/calllog/calllog.component';
 
     NgxGalleryModule,
 
-    VendorRoutingModule
+    VendorRoutingModule,
+    BannerModule
   ],
   providers: [
     LoginAuthGraud,

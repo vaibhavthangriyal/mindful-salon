@@ -73,40 +73,63 @@
       <div class="modal-body">
         <form [formGroup]="productForm" (ngSubmit)="submit()">
           <div class="row">
-            <div class="col">
-              <div class="form-row">
-                <div class="" id="imagePreviewPrimary text-center">
-                  <!-- <img *ngIf="!currentproduct?.images.primary"
-                    src="https://www.cureuppharma.in/wp-content/uploads/2018/06/dummy.jpg" alt=""
-                    class="imagePreviewPrimary" height="50%"> -->
-                  <img *ngIf="currentproduct?.images?.primary"
-                    src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{currentproduct?.images.primary}}" alt=""
-                    class="imagePreviewPrimary">
-                  <h5 class="text-center">Primary Image</h5>
-                  <label class="btn btn-primary">
-                    Choose Image<input type="file" class="uploadFile img" value="Upload Photo"
-                      style="width: 0px;height: 0px;overflow: hidden;"
-                      (change)="onProductImageSelect($event, 'primary')">
-                  </label>
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="" id="imagePreviewPrimary text-center">
-                  <h5 class="text-center">Secondary Image</h5>
-                  <!-- <img *ngIf="!currentproduct?.images.primary"
-                    src="https://www.cureuppharma.in/wp-content/uploads/2018/06/dummy.jpg" alt=""
-                    class="imagePreviewPrimary"> -->
-                  <img *ngIf="currentproduct?.images.secondary"
-                    src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{currentproduct?.images?.secondary}}" alt=""
-                    class="imagePreviewPrimary">
-                  <label class="btn btn-primary">
-                    Choose Image<input type="file" class="uploadFile img" value="Upload Photo"
-                      style="width: 0px;height: 0px;overflow: hidden;"
-                      (change)="onProductImageSelect($event, 'secondary')">
-                  </label>
-                </div>
-              </div>
+            <div class="col"><div class="form-row " *ngIf="!editing">
+              <img *ngIf="!filenamePrimaryProductImage "
+                src="https://binsar.s3.ap-south-1.amazonaws.com/default-images/profile-picture.png"
+                class="img-thumbnail" style="height: 150px;" />
+              <img *ngIf="filenamePrimaryProductImage" [src]="filenamePrimaryProductImage"
+                alt="{{filenamePrimaryProductImage}}" class="img-thumbnail" style="height: 150px;" />
+              <br>
+              <label class="custom-file-upload caption center-block" style="color: green;margin-left: 10px;">
+                <input type="file" (change)="onProductImageSelectPrimary($event,'primary')" style="display: none;" />
+                <b>Choose image</b>
+              </label>
             </div>
+            <div class="form-row " *ngIf="editing">
+              <img *ngIf="!filenamePrimaryProductImage && currentproduct?.images?.primary == null "
+                src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{currentproduct?.images?.primary}}"
+                class="img-thumbnail" style="height: 150px;" />
+              <img *ngIf="!filenamePrimaryProductImage && currentproduct?.images?.primary != null"
+                src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{currentproduct?.images?.primary}}"
+                class="img-thumbnail" style="height: 150px;" />
+              <img *ngIf="filenamePrimaryProductImage" [src]="filenamePrimaryProductImage"
+                alt="{{filenamePrimaryProductImage}}" class="img-thumbnail" style="height: 150px;" />
+              <br>
+              <label class="custom-file-upload caption center-block" style="color: green;margin-left: 10px;">
+                <input type="file" (change)="onProductImageSelectPrimary($event,'primary')" style="display: none;" />
+                <b>Choose image</b>
+              </label>
+            </div>
+            <div class="form-row " *ngIf="!editing">
+              <img *ngIf="!filenameSecondaryProductImage "
+                src="https://binsar.s3.ap-south-1.amazonaws.com/default-images/profile-picture.png"
+                class="img-thumbnail" style="height: 150px;" />
+              <img *ngIf="filenameSecondaryProductImage" [src]="filenameSecondaryProductImage"
+                alt="{{filenameSecondaryProductImage}}" class="img-thumbnail" style="height: 150px;" />
+              <br>
+              <label class="custom-file-upload caption center-block" style="color: green;margin-left: 10px;">
+                <input type="file" (change)="onProductImageSelectSecondary($event,'secondary')"
+                  style="display: none;" />
+                <b>Choose image</b>
+              </label>
+            </div>
+            <div class="form-row " *ngIf="editing">
+              <img *ngIf="!filenameSecondaryProductImage && currentproduct?.images?.secondary == null"
+                src="https://binsar.s3.ap-south-1.amazonaws.com/default-images/profile-picture.png"
+                class="img-thumbnail" style="height: 150px;" />
+              <img *ngIf="!filenameSecondaryProductImage && currentproduct?.images?.secondary != null"
+                src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{currentproduct?.images?.secondary}}"
+                class="img-thumbnail" style="height: 150px;" />
+              <img *ngIf="filenameSecondaryProductImage" [src]="filenameSecondaryProductImage"
+                alt="{{filenameSecondaryProductImage}}" class="img-thumbnail" style="height: 150px;" />
+              <br>
+              <label class="custom-file-upload caption center-block" style="color: green;margin-left: 10px;">
+                <input type="file" (change)="onProductImageSelectSecondary($event,'secondary')"
+                  style="display: none;" />
+                <b>Choose image</b>
+              </label>
+            </div>
+          </div>
             <div class="col">
               <div class="form-row">
                 <!-- <div class="form-group col-md-4"> -->
@@ -543,10 +566,8 @@
   </div>
 </div>
 
-
 <!-- ****************** ADD IMAGES TO VARIENT MODAL ********************************** -->
-<div class="modal fade" *ngIf="currentVarient" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModal"
-  aria-hidden="true">
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -561,13 +582,22 @@
             <div class="col imgUp">
               <div class="" id="imagePreviewPrimary">
                 <h5 class="text-center">Primary Image</h5>
-                <img *ngIf="currentVarient?.images?.primary"
-                  src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{currentVarient?.images.primary}}" alt=""
-                  class="imagePreviewPrimary">
+                <img *ngIf="!filenamePrimaryVarientProductImage"
+                  src="https://binsar.s3.ap-south-1.amazonaws.com/default-images/profile-picture.png"
+                  class="img-thumbnail" style="height: 150px;" />
+                <img *ngIf="filenamePrimaryVarientProductImage" [src]="filenamePrimaryVarientProductImage"
+                  alt="{{filenamePrimaryVarientProductImage}}" class="img-thumbnail" style="height: 150px;" />
+                <br>
+                <label class="custom-file-upload caption center-block" style="color: green;margin-left: 10px;">
+                  <input type="file" (change)="onPrimaryVarientImageSelect($event, 'primary')" style="display: none;" />
+                  <b>Choose image</b>
+                </label>
+                <!-- <img *ngIf="currentproduct?.images?.primary" src="{{imageUrl}}/{{currentproduct?.images?.primary}}"
+                  alt="" class="imagePreviewPrimary">
                 <label class="btn btn-primary">
                   Choose Image<input type="file" class="uploadFile img" value="Upload Photo"
                     style="width: 0px;height: 0px;overflow: hidden;" (change)="onSelectFile($event, 'primary')">
-                </label>
+                </label> -->
               </div>
             </div>
             <div class="divider-text divider-vertical" data-text="and">
@@ -575,91 +605,37 @@
             <div class="col imgUp">
               <div class="" id="imagePreviewSecondary">
                 <h5 class="text-center">Secondary Image</h5>
-                <img *ngIf="currentVarient?.images?.secondary"
-                  src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{currentVarient?.images.secondary}}" alt=""
-                  class="imagePreviewPrimary">
+                <img *ngIf="!filenameSecondaryVarientProductImage"
+                  src="https://binsar.s3.ap-south-1.amazonaws.com/default-images/profile-picture.png"
+                  class="img-thumbnail" style="height: 150px;" />
+                <img *ngIf="filenameSecondaryVarientProductImage" [src]="filenameSecondaryVarientProductImage"
+                  alt="{{filenameSecondaryVarientProductImage}}" class="img-thumbnail" style="height: 150px;" />
+                <br>
+                <label class="custom-file-upload caption center-block" style="color: green;margin-left: 10px;">
+                  <input type="file" (change)="onSecondaryVarientImageSelect($event, 'secondary')"
+                    style="display: none;" />
+                  <b>Choose image</b>
+                </label>
+                <!-- <img *ngIf="currentproduct?.images?.secondary" src="{{imageUrl}}/{{currentproduct?.images?.secondary}}"
+                  alt="" class="imagePreviewPrimary">
                 <label class="btn btn-primary">
                   Choose Image<input type="file" class="uploadFile img" value="Upload Photo"
                     style="width: 0px;height: 0px;overflow: hidden;" (change)="onSelectFile($event, 'secondary')">
-                </label>
+                </label> -->
               </div>
             </div>
-            <!-- <div class="divider-text divider-vertical" data-text="and"></div>
-            <div class="col">
-              <div class="divider-text divider-vertical" data-text="and"></div>
-  
-            </div> -->
-            <!-- <div class="" *ngIf="(galleryImages.length > 0)">
-            <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
-          </div>
-          <div class="jumbotron text-center" *ngIf="!(galleryImages.length > 0)">
-            NO IMAGES FOUND!! ADD NEW IMAGES
-          </div>
-          <input type="file" name="" id="" (change)="onSelectFile($event)" multiple> -->
-          </div>
-          <div class="divider-text">Upload Images</div>
-          <div class="row ml-auto">
-            <button class="btn btn-primary" *ngIf="!uploadingImages" (click)="uploadImages()">Upload Images</button>
-            <button class="btn btn-primary" type="button" disabled *ngIf="uploadingImages">
-              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-              Uploading...
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ****************** ADD IMAGES TO VARIENT MODAL ********************************** -->
-  <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title ml-auto font-weight-bold" id="exampleModalLabel">Add Images</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="container">
-            <div class="row">
-              <div class="col imgUp">
-                <div class="" id="imagePreviewPrimary">
-                  <h5 class="text-center">Primary Image</h5>
-                  <img *ngIf="currentproduct?.images.primary"
-                    src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{currentproduct?.images.primary}}" alt=""
-                    class="imagePreviewPrimary">
-                  <label class="btn btn-primary">
-                    Choose Image<input type="file" class="uploadFile img" value="Upload Photo"
-                      style="width: 0px;height: 0px;overflow: hidden;" (change)="onSelectFile($event, 'primary')">
-                  </label>
-                </div>
-              </div>
-              <div class="divider-text divider-vertical" data-text="and">
-              </div>
-              <div class="col imgUp">
-                <div class="" id="imagePreviewSecondary">
-                  <h5 class="text-center">Secondary Image</h5>
-                  <img *ngIf="currentproduct?.images.secondary"
-                    src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{currentproduct?.images.secondary}}" alt=""
-                    class="imagePreviewPrimary">
-                  <label class="btn btn-primary">
-                    Choose Image<input type="file" class="uploadFile img" value="Upload Photo"
-                      style="width: 0px;height: 0px;overflow: hidden;" (change)="onSelectFile($event, 'secondary')">
-                  </label>
-                </div>
-              </div>
-              <div class="divider-text">Upload Images</div>
-              <div class="row ml-auto">
-                <button class="btn btn-primary" *ngIf="!uploadingImages" (click)="uploadImages()">Upload Images</button>
-                <button class="btn btn-primary" type="button" disabled *ngIf="uploadingImages">
-                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                  Uploading...
-                </button>
-              </div>
+            <div class="divider-text divider-vertical" data-text="and">
+            </div>
+            <div class="col ml-auto mt-2">
+              <button class="btn btn-primary" *ngIf="!uploadingImages" (click)="uploadImages()">Upload Images</button>
+              <button class="btn btn-primary" type="button" disabled *ngIf="uploadingImages">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Uploading...
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>

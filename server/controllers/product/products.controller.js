@@ -9,7 +9,7 @@ const newProductSchema = Joi.object({
     brand: Joi.string().required(),
     details: Joi.string().optional().allow(''),
     type: Joi.string().required(),
-    is_service: Joi.boolean().required().default(false),
+    is_service: Joi.boolean().optional(),
 })
 
 const updateProductSchema = Joi.object({

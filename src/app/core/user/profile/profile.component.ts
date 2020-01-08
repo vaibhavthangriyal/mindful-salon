@@ -13,9 +13,11 @@ import { Title } from '@angular/platform-browser';
 export class ProfileComponent implements OnInit {
   confirmPassword: string;
   passwordMatched: Boolean = false;
-  profileForm: FormGroup;
+  registerForm: FormGroup;
   submitted: Boolean = false;
-
+  me: any;
+  profilePicture: any;
+  filenameProfilePicture: string | ArrayBuffer;
   constructor(private profileService: ProfileService, private toasterService: ToastrService, private formBuilder: FormBuilder,
     private titleService: Title) {
     this.getInformation();
@@ -27,7 +29,7 @@ export class ProfileComponent implements OnInit {
   }
 
   initProfileForm() {
-    this.profileForm = this.formBuilder.group({
+    this.registerForm = this.formBuilder.group({
       full_name: ['', Validators.required],
       email: ['', Validators.required],
       is_active: [true],
@@ -39,57 +41,104 @@ export class ProfileComponent implements OnInit {
       city: ['', Validators.required],
       profile_picture: [''],
       dob: [new Date(), Validators.required],
-      gender: ['male']
+      gender: ['']
     });
   }
 
   get f() {
-    return this.profileForm.controls;
+    return this.registerForm.controls;
   }
 
   getInformation() {
     this.profileService.getOwnInformation().subscribe((res: ResponseModel) => {
+      console.log(res);
       if (res.errors) {
         this.toasterService.error('Error Whil Updating', 'Try again');
       } else {
+        this.me = res.data;
         this.setFormValue(res.data);
       }
     });
   }
 
   setFormValue(user) {
-    this.profileForm.controls['email'].setValue(user.email);
-    this.profileForm.controls['full_name'].setValue(user.full_name);
-    this.profileForm.controls['role'].setValue(user.role._id);
-    this.profileForm.controls['mobile_number'].setValue(user.mobile_number);
+    console.log(user);
+    if (user.email) {
+      this.registerForm.controls['email'].setValue(user.email);
+    }
+    if (user.full_name) {
+      this.registerForm.controls['full_name'].setValue(user.full_name);
+    }
+    if (user.role) {
+      this.registerForm.controls['role'].setValue(user.role._id);
+    }
+    if (user.mobile_number) {
+      this.registerForm.controls['mobile_number'].setValue(user.mobile_number);
+    }
     if (user.dob) {
       const dob = user.dob.substring(0, 10);
-      this.profileForm.controls['dob'].setValue(dob);
+      this.registerForm.controls['dob'].setValue(dob);
     } else {
-      this.profileForm.controls['dob'].setValue(new Date());
+      this.registerForm.controls['dob'].setValue(new Date());
     }
-    this.profileForm.controls['gender'].setValue(user.gender);
-    this.profileForm.controls['landmark'].setValue(user.landmark);
-    this.profileForm.controls['password'].setValue(user.password);
-    this.profileForm.controls['street_address'].setValue(user.street_address);
-    this.profileForm.controls['city'].setValue(user.city);
-    this.profileForm.controls['profile_picture'].setValue(user.profile_picture);
+    if (user.gender) {
+      this.registerForm.controls['gender'].setValue(user.gender);
+    }
+    if (user.landmark) {
+      this.registerForm.controls['landmark'].setValue(user.landmark);
+    }
+    if (user.password) {
+      this.registerForm.controls['password'].setValue(user.password);
+    }
+    if (user.street_address) {
+      this.registerForm.controls['street_address'].setValue(user.street_address);
+    }
+    if (user.city) {
+      this.registerForm.controls['city'].setValue(user.city);
+    }
+    if (user.profile_picture) {
+      this.registerForm.controls['profile_picture'].setValue(user.profile_picture);
+    }
   }
 
   onSubmit() {
-    this.profileService.updateOwnInformation(this.profileForm.value).subscribe((res: ResponseModel) => {
+    console.log(this.registerForm);
+    let registerFormData = new FormData();
+    if (this.registerForm.get('password').value == '') {
+      this.registerForm.removeControl('password');
+    }
+    Object.keys(this.registerForm.controls).forEach(control => {
+      registerFormData.append(control, this.registerForm.get(control).value);
+    });
+    if(this.profilePicture) {
+      registerFormData.append('profile_picture', this.profilePicture);
+    }
+    this.profileService.updateOwnInformation(registerFormData).subscribe((res: ResponseModel) => {
+      console.log(res);
       if (res.errors) {
         this.toasterService.error('Error Whil Updating', 'Try again');
       } else {
+        this.me = res.data;
         this.toasterService.success('Updated', 'Success');
+        jQuery('#editForm').modal('hide');
+        this.registerForm.reset();
+        this.initProfileForm();
         this.setFormValue(res.data);
       }
     });
   }
 
-  selectFile(event) {
-    console.log(event);
+  onImageSelect(event) {
+    if (event.target.files && event.target.files[0]) {
+      var reader = new FileReader();
+      reader.readAsDataURL(event.target.files[0]); // read file as data url
+      this.profilePicture = event.target.files[0];
+      reader.onload = (event) => { // called once readAsDataURL is completed
+        this.filenameProfilePicture = event.target.result;
+      }
+    }
   }
+
   checkPassword() { }
   selectGender(event) {
     console.log(event);

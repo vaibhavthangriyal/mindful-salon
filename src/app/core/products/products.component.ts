@@ -92,6 +92,14 @@ export class ProductsComponent implements OnInit {
   allCategoryArray: any[] = [];
   showSellingPrice: Boolean = false;
   uploadingImages: Boolean = false;
+  primaryProductImage: any;
+  filenamePrimaryProductImage: string | ArrayBuffer;
+  secondaryProductImage: any;
+  filenameSecondaryProductImage: string | ArrayBuffer;
+  primaryVarientProductImage: any;
+  filenamePrimaryVarientProductImage: string | ArrayBuffer;
+  secondaryVarientProductImage: any;
+  filenameSecondaryVarientProductImage: string | ArrayBuffer;
   constructor(
     private productService: ProductsService,
     private formBuilder: FormBuilder,
@@ -106,6 +114,7 @@ export class ProductsComponent implements OnInit {
   ) {
     this.titleService.setTitle('Mindful Salon | Product Management');
     this.initForm();
+    this.initGallery(null);
   }
 
   ngOnInit() {
@@ -162,7 +171,7 @@ export class ProductsComponent implements OnInit {
       details: [''],
       is_active: [false],
       name: ['', Validators.required],
-      image: [''],
+      // image: [''],
       type: [''],
       is_service: [false]
     });
@@ -212,12 +221,14 @@ export class ProductsComponent implements OnInit {
       }
     ];
     const imageArray: any[] = [];
-    for (let index = 0; index < photos.length; index++) {
-      const imageObject: { small: String, medium: String, big: String } = { small: '', medium: '', big: '' };
-      imageObject.small = 'https://mindful-salon.s3.ap-south-1.amazonaws.com/' + photos[index];
-      imageObject.medium = 'https://mindful-salon.s3.ap-south-1.amazonaws.com/' + photos[index];
-      imageObject.big = 'https://mindful-salon.s3.ap-south-1.amazonaws.com/' + photos[index];
-      imageArray.push(imageObject);
+    if (photos) {
+      for (let index = 0; index < photos.length; index++) {
+        const imageObject: { small: String, medium: String, big: String } = { small: '', medium: '', big: '' };
+        imageObject.small = 'https://mindful-salon.s3.ap-south-1.amazonaws.com/' + photos[index];
+        imageObject.medium = 'https://mindful-salon.s3.ap-south-1.amazonaws.com/' + photos[index];
+        imageObject.big = 'https://mindful-salon.s3.ap-south-1.amazonaws.com/' + photos[index];
+        imageArray.push(imageObject);
+      }
     }
     this.galleryImages = imageArray;
     console.log(this.galleryImages);
@@ -460,6 +471,31 @@ export class ProductsComponent implements OnInit {
   }
   // ************************** SUBMIT FUNCTIONS *****************************
   submit() {
+    this.productForm.get('type').setValue(this.productType);
+    this.submitted = true;
+    // if (!this.productForm.get('image').value) {
+    //   this.productForm.removeControl('image');
+    // }
+    Object.keys(this.productForm.controls).forEach(control => {
+      if (!(this.productForm.get(control).value)) {
+        this.productForm.removeControl(control);
+      } else {
+        this.productFormData.append(control, this.productForm.get(control).value);
+      }
+    });
+    // this.productFormData.forEach((element)=>{
+    //   console.log(element);
+    // })
+    if (this.productForm.invalid) {
+      this.toastr.error('Invalid Form', 'Error');
+      return;
+    } else {
+      if (this.editing) {
+        this.updateProduct(this.productFormData);
+      } else {
+        this.addProduct(this.productFormData);
+      }
+    }
   }
 
   saveVarient() {
@@ -470,6 +506,7 @@ export class ProductsComponent implements OnInit {
         this.productVarient.value.attributes[index].attribute = this.productAttributeArray[index]._id;
       }
       this.productVarientService.addNewProductVarients(this.productVarient.value).subscribe((res: ResponseModel) => {
+        console.log(res.data);
         if (res.errors) {
           this.toastr.error('Error While Adding Varient', 'Refresh And Retry');
         } else {
@@ -478,20 +515,30 @@ export class ProductsComponent implements OnInit {
           jQuery('#addVarientModal').modal('hide');
         }
       });
-    } else {
+    }  else {
       this.productVarient.removeControl('product');
+      const attributesArray: any = {};
+      attributesArray['attributes'] = [];
       for (let i = 0; i < this.currentVarient.attributes.length; i++) {
-        this.productVarient.value.attributes[i].attribute = this.currentVarient.attributes[i].attribute._id;
+        attributesArray.attributes[i] = { attribute: this.currentVarient.attributes[i].attribute._id, option: this.productVarient.value.attributes[i].option }
       }
-      this.varientFormData = new FormData();
-      this.varientFormData.append('product', this.productVarient.get('product').value);
-      this.varientFormData.append('attributes', this.productVarient.get('attributes').value);
-      this.varientFormData.append('description', this.productVarient.get('description').value);
-      this.varientFormData.append('price', this.productVarient.get('price').value);
-      this.varientFormData.append('stock', this.productVarient.get('stock').value);
-      this.varientFormData.append('images', this.productVarient.get('images').value);
-      this.productVarientService.updateProductVarients(this.currentVarient._id, this.varientFormData)
+      this.productVarient.get('attributes').setValue(attributesArray.attributes);
+      // console.log(this.currentVarient);
+      // this.productFormData = new FormData();
+      // this.productFormData.append('product', this.currentVarient.product);
+      // this.productFormData.append('attributes', JSON.stringify(this.productVarient.value.attributes));
+      // this.productFormData.append('description', this.productVarient.get('description').value);
+      // this.productFormData.append('price', this.productVarient.get('price').value);
+      // this.productFormData.append('stock', this.productVarient.get('stock').value);
+      // this.productFormData.forEach((element) => {
+      //   console.log(element);
+      // })
+      // this.productFormData.append('images', this.productVarient.get('images').value);
+      this.productVarient.removeControl('images');
+      console.log(this.productVarient);
+      this.productVarientService.updateProductVarients(this.currentVarient._id, this.productVarient.value)
         .subscribe((res: ResponseModel) => {
+          console.log(res);
           if (res.errors) {
             this.toastr.error('Error While Deleting Varient');
           } else {
@@ -507,6 +554,7 @@ export class ProductsComponent implements OnInit {
     this.editing = false;
     this.submitted = false;
     this.productForm.reset();
+    this.initForm();
     this.editShowImage = false;
     this.checkboxes.forEach((element) => {
       element.nativeElement.checked = false;
@@ -514,6 +562,19 @@ export class ProductsComponent implements OnInit {
     this.selectallcheckboxes.forEach((element) => {
       element.nativeElement.checked = false;
     });
+    this.subCategory1 = null;
+    this.allSubCategories.length = 0;
+    this.subCategory2 = null;
+    this.allSubCategories2.length = 0;
+    this.subCategory3 = null;
+    this.allSubCategories3.length = 0;
+    this.subCategory4 = null;
+    this.allSubCategories4.length = 0;
+    this.editShowImage = false;
+    this.primaryProductImage = null;
+    this.filenamePrimaryProductImage = null;
+    this.secondaryProductImage = null;
+    this.filenameSecondaryProductImage = null;
     this.productFormData = new FormData();
     this.currentVarient = undefined;
     this.currentproduct = undefined;
@@ -589,8 +650,13 @@ export class ProductsComponent implements OnInit {
 
   editVarient(index: number) {
     this.initProductVarientForm();
+    this.imageFormData = new FormData();
     this.currentVarient = this.varientArray[index];
     this.varientIndex = index;
+    this.primaryVarientProductImage = null;
+    this.filenamePrimaryVarientProductImage = null;
+    this.secondaryVarientProductImage = null;
+    this.filenameSecondaryVarientProductImage = null;
     this.setVarientImages();
     this.initGallery(this.currentVarient.images);
     console.log(this.currentVarient);
@@ -721,5 +787,79 @@ export class ProductsComponent implements OnInit {
     //   }
     // }
   }
-}
 
+  onPrimaryVarientImageSelect(event, type) {
+    if (this.imageFormData.get('type') != undefined) {
+      this.imageFormData.delete('type');
+    } else {
+      this.imageFormData.append(type, event.target.files[0]);
+    }
+    if (event.target.files && event.target.files[0]) {
+      var reader = new FileReader();
+      reader.readAsDataURL(event.target.files[0]); // read file as data url
+      this.primaryVarientProductImage = event.target.files[0];
+      reader.onload = (event) => { // called once readAsDataURL is completed
+        this.filenamePrimaryVarientProductImage = event.target.result;
+      }
+    }
+  }
+
+  onProductImageSelectPrimary(event, type) {
+    if (this.productFormData.get('type') != undefined) {
+      this.productFormData.delete('type');
+    } else {
+      this.productFormData.append(type, event.target.files[0]);
+    }
+    if (event.target.files && event.target.files[0]) {
+      var reader = new FileReader();
+      reader.readAsDataURL(event.target.files[0]); // read file as data url
+      this.primaryProductImage = event.target.files[0];
+      reader.onload = (event) => { // called once readAsDataURL is completed
+        this.filenamePrimaryProductImage = event.target.result;
+      }
+    }
+  }
+
+  onSecondaryVarientImageSelect(event, type) {
+    if (this.imageFormData.get('type') != undefined) {
+      this.imageFormData.delete('type');
+    } else {
+      this.imageFormData.append(type, event.target.files[0]);
+    }
+    if (event.target.files && event.target.files[0]) {
+      var reader = new FileReader();
+      reader.readAsDataURL(event.target.files[0]); // read file as data url
+      this.secondaryVarientProductImage = event.target.files[0];
+      reader.onload = (event) => { // called once readAsDataURL is completed
+        this.filenameSecondaryVarientProductImage = event.target.result;
+      }
+    }
+    // if (event.target.files && event.target.files[0]) {
+    //   const filesAmount = event.target.files.length;
+    //   for (let i = 0; i < filesAmount; i++) {
+    //     this.productFormData.append(type, event.target.files[i]);
+    //   }
+    // }
+  }
+  onProductImageSelectSecondary(event, type) {
+    if (this.productFormData.get('type') != undefined) {
+      this.productFormData.delete('type');
+    } else {
+      this.productFormData.append(type, event.target.files[0]);
+    }
+    if (event.target.files && event.target.files[0]) {
+      var reader = new FileReader();
+      reader.readAsDataURL(event.target.files[0]); // read file as data url
+      this.secondaryProductImage = event.target.files[0];
+      reader.onload = (event) => { // called once readAsDataURL is completed
+        this.filenameSecondaryProductImage = event.target.result;
+      }
+    }
+    // if (event.target.files && event.target.files[0]) {
+    //   const filesAmount = event.target.files.length;
+    //   for (let i = 0; i < filesAmount; i++) {
+    //     this.productFormData.append(type, event.target.files[i]);
+    //   }
+    // }
+  }
+}

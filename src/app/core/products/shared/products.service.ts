@@ -39,7 +39,7 @@ export class ProductsService {
   }
 
   updateProduct(product, id) {
-    return this.http.put(this.productURL + '/id/' + id, product, { headers: this.headers });
+    return this.http.put(this.productURL + '/id/' + id, product, { headers: this.headersFormData });
   }
 
   importCustomer(csv) {
@@ -51,7 +51,7 @@ export class ProductsService {
   }
 
   addCategory(category) {
-    return this.http.post(this.url2 + '/', category, { headers: this.headers });
+    return this.http.post(this.url2 + '/', category, { headers: this.headersFormData });
   }
 
   deleteCategory(id) {
@@ -59,7 +59,7 @@ export class ProductsService {
   }
 
   updateCategory(category, id) {
-    return this.http.put(this.url2 + '/' + id, category, { headers: this.headers });
+    return this.http.put(this.url2 + '/' + id, category, { headers: this.headersFormData });
   }
   // Brand API
   getAllBrand() {
@@ -67,7 +67,7 @@ export class ProductsService {
   }
 
   addBrand(brand) {
-    return this.http.post(this.url3 + '/', brand, { headers: this.headers });
+    return this.http.post(this.url3 + '/', brand, { headers: this.headersFormData });
   }
 
   deleteBrand(id) {
@@ -75,7 +75,7 @@ export class ProductsService {
   }
 
   updateBrand(brand, id) {
-    return this.http.put(this.url3 + '/' + id, brand, { headers: this.headers });
+    return this.http.put(this.url3 + '/' + id, brand, { headers: this.headersFormData });
   }
 
   // Hub User

@@ -11,6 +11,9 @@ export class ProfileService {
         'Content-Type': 'application/json',
         'token': this.tokenService.getToken()
     });
+    headersFormdata = new HttpHeaders({
+        'token': this.tokenService.getToken()
+    });
     url = '/api/user';
     constructor(private http: HttpClient, private tokenService: TokenStorage) { }
 
@@ -19,6 +22,6 @@ export class ProfileService {
     }
 
     updateOwnInformation(information) {
-        return this.http.put(this.url + '/me', information, { headers: this.headers });
+        return this.http.put(this.url + '/me', information, { headers: this.headersFormdata });
     }
 }

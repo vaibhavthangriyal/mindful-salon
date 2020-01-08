@@ -1,0 +1,88 @@
+<div class="container-fluid">
+  <div class="card">
+    <div class="card-header">
+      <h2 class="float-left">Banner Management</h2>
+      <!-- <a class="btn btn-primary float-right text-white" (click)="resetForm()" data-toggle="modal"
+          data-target="#modal3">Add New
+          Customer</a> -->
+      <a class="btn btn-primary text-white mx-1 float-right" (click)="resetForm()" data-toggle="modal"
+        data-target="#modal3">Upload Banner</a>
+    </div>
+    <div class="card-body">
+      <table class="table table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th scope="col">S.No</th>
+            <th scope="col">Banner</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let banner of allBanners; let i = index">
+            <td>{{i+1}}</td>
+            <td>
+              <img src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{allBanners[i]?.image}}"           
+                class="img-thumbnail" style="height: 50px;"/>
+            </td>
+            <td>
+              <a style="cursor: pointer" (click)="viewBanner(i)" data-toggle="modal" data-target="#exampleModal"><i class="far fa-eye mx-1"></i></a>
+              <a style="cursor: pointer" (click)="deleteBanner(i)"><i class="fas fa-trash-alt"></i></a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+    <div class="modal-content tx-14">
+      <div class="modal-header">
+        <h6 class="modal-title ml-auto font-weight-bold" id="exampleModalLabel3">Add New Banner Image</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <!-- <label><b>Enter Banner Image</b></label> -->
+            <img *ngIf="!filenameBannerImage"
+              src="https://binsar.s3.ap-south-1.amazonaws.com/default-images/profile-picture.png" class="img-thumbnail"
+              style="height: 150px;" />
+            <img *ngIf="filenameBannerImage" [src]="filenameBannerImage" alt="{{filenameBannerImage}}"
+              class="img-thumbnail" style="height: 150px;" />
+            <br>
+            <label class="custom-file-upload" style="color: green;">
+              <input type="file" (change)="onBannerImageSelect($event)" style="display: none;margin-left: 100px;" />
+              <b>Choose image</b>
+            </label>
+          </div>
+          <br>
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary tx-13 mx-1" (click)="saveImage()">Save</button>
+            <button type="button" class="btn btn-primary tx-13" data-dismiss="modal">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ***************VIEW BANNER IN LARGE********************* -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Banner</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <img src="https://mindful-salon.s3.ap-south-1.amazonaws.com/{{currentBanner?.image}}" class="img-fluid" alt="Responsive image">
+      </div>
+    </div>
+  </div>
+</div>
