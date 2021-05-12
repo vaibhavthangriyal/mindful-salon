@@ -51,7 +51,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",
     "bootstrap": "^4.3.1",
-    "chart.js": "^2.7.3",
+    "chart.js": "^2.9.4",
     "cleave.js": "^1.4.7",
     "components-jqueryui": "^1.12.1",
     "compression": "^1.7.2",
